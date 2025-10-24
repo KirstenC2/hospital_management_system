@@ -24,7 +24,7 @@
     data() {
       return {
         navItems: [
-          { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt', label: '儀表板' },
+          { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt', label: '首頁' },
           { name: 'Patients', path: '/patients', icon: 'fas fa-user-injured', label: '病人管理' },
           { name: 'Doctors', path: '/doctors', icon: 'fas fa-user-md', label: '醫生管理' },
           { name: 'Doctors', path: '/staffs', icon: 'fas fa-user-md', label: '員工管理' },

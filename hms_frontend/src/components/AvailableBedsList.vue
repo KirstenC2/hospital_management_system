@@ -212,41 +212,5 @@
     gap: 10px;
     justify-content: flex-end;
   }
-  
-  .btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-dark);
-  }
-  
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-  }
-  
-  .btn-outline:hover {
-    background-color: var(--primary);
-    color: white;
-  }
-  
-  .btn-sm {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
+
   </style>

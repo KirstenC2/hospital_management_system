@@ -30,7 +30,7 @@ const router = createRouter({
       component: Doctors,
     },
     {
-      path: "/staff",
+      path: "/staffs",
       name: "Staffs",
       component: Staffs,
     },

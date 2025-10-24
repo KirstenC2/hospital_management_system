@@ -785,28 +785,6 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header h1 {
-  color: var(--dark);
-  font-size: 28px;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 10px;
-}
-
 /* 篩選器樣式 */
 .filters {
   background: white;
@@ -862,28 +840,7 @@ onMounted(() => {
   border-color: var(--primary);
 }
 
-/* 統計卡片 */
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
 
-.stat-card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-}
 
 .stat-icon {
   width: 50px;
@@ -900,18 +857,6 @@ onMounted(() => {
 .occupied .stat-icon { background-color: #ef4444; }
 .available .stat-icon { background-color: var(--secondary); }
 .maintenance .stat-icon { background-color: #f59e0b; }
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--dark);
-}
-
-.stat-label {
-  color: #64748b;
-  font-size: 14px;
-}
 
 /* 樓層容器 */
 .floors-container {
@@ -1128,103 +1073,6 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
-/* 按鈕樣式 */
-.btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 14px;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-}
-
-.btn-outline {
-  background-color: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-
-.btn-outline:hover {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-success {
-  background-color: var(--secondary);
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #0d966b;
-}
-
-.btn-warning {
-  background-color: #f59e0b;
-  color: white;
-}
-
-.btn-warning:hover {
-  background-color: #d97706;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-/* 模態框 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
-  border-radius: 10px 10px 0 0;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: var(--dark);
-  font-size: 18px;
-}
 
 .close-btn {
   background: none;
@@ -1244,76 +1092,9 @@ onMounted(() => {
   color: var(--dark);
 }
 
-.modal-body {
-  padding: 20px;
-}
-
 .detail-grid {
   display: grid;
   gap: 12px;
-}
-
-.detail-item {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  align-items: start;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
-}
-
-.detail-item label {
-  font-weight: 600;
-  color: #64748b;
-  font-size: 14px;
-}
-
-.detail-item span {
-  color: var(--dark);
-  font-size: 14px;
-}
-
-/* 表單樣式 */
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #374151;
-  font-size: 14px;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
 }
 
 /* 響應式設計 */
@@ -1326,16 +1107,6 @@ onMounted(() => {
 @media (max-width: 768px) {
   .beds-view {
     padding: 15px;
-  }
-
-  .header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-
-  .header-actions {
-    justify-content: center;
   }
 
   .filters {
@@ -1354,10 +1125,6 @@ onMounted(() => {
 
   .filter-buttons {
     justify-content: center;
-  }
-
-  .stats-cards {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .floor-header {
@@ -1380,29 +1147,9 @@ onMounted(() => {
     gap: 10px;
     align-items: flex-start;
   }
-
-  .modal-overlay {
-    padding: 10px;
-  }
-
-  .modal-content {
-    margin: 10px;
-  }
-
-  .detail-item {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
 }
 
 @media (max-width: 480px) {
-  .stats-cards {
-    grid-template-columns: 1fr;
-  }
 
   .filter-buttons {
     flex-direction: column;
@@ -1414,10 +1161,6 @@ onMounted(() => {
 
   .bed-actions {
     flex-direction: column;
-  }
-
-  .btn {
-    justify-content: center;
   }
 }
 

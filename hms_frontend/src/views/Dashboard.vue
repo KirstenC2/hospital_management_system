@@ -320,9 +320,6 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.content {
-  padding: 20px 0;
-}
 
 /* 儀表板卡片 */
 .dashboard-cards {

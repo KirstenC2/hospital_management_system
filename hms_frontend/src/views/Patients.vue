@@ -642,59 +642,6 @@
     font-size: 28px;
   }
   
-  .btn {
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-dark);
-  }
-  
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    padding: 6px 12px;
-  }
-  
-  .btn-outline:hover {
-    background-color: var(--primary);
-    color: white;
-  }
-  
-  .data-table {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  
-  th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #64748b;
-  }
   
   .status {
     padding: 5px 10px;
@@ -732,30 +679,6 @@
 
 .text-warning {
   color: #f59e0b;
-}
-/* 統計卡片 */
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-left: 4px solid transparent;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .stat-icon {
@@ -805,24 +728,6 @@
   border-left-color: var(--secondary);
 }
 
-.stat-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--dark);
-  line-height: 1;
-}
-
-.stat-label {
-  color: #64748b;
-  font-size: 14px
-}
-
 
 .waiting-grid {
   display: grid;
@@ -868,34 +773,10 @@
   margin-bottom: 15px;
 }
 
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 13px;
-  color: #64748b;
-}
-
-.detail-item i {
-  width: 14px;
-  text-align: center;
-  color: #f59e0b;
-}
-
 .patient-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.btn-danger {
-  background-color: #ef4444;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #dc2626;
 }
 
 /* 表格樣式增強 */
@@ -983,14 +864,7 @@
   .patient-actions {
     flex-direction: column;
   }
-  .stats-cards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-  
-  .stat-card {
-    padding: 15px;
-  }
+
   
   .stat-icon {
     width: 40px;
@@ -998,65 +872,7 @@
     font-size: 20px;
   }
   
-  .stat-value {
-    font-size: 20px;
-  }
-}
-/* 狀態篩選 */
-.status-filter {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-}
 
-.filter-title {
-  font-weight: 600;
-  color: var(--dark);
-  min-width: 80px;
-  padding-top: 5px;
-  font-size: 14px;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-.filter-btn {
-  padding: 8px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: white;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.filter-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: #f8fafc;
-}
-
-.filter-btn.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.filter-btn.active:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
 }
 
 /* 響應式設計 */
@@ -1079,9 +895,6 @@
 }
 
 @media (max-width: 480px) {
-    .stats-cards {
-    grid-template-columns: 1fr;
-  }
   .filter-buttons {
     flex-direction: column;
   }
@@ -1089,12 +902,6 @@
   .filter-btn {
     text-align: center;
   }
-  .stats-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .stat-card {
-    padding: 12px;
-  }
+
 }
   </style>

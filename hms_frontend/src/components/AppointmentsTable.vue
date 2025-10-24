@@ -118,62 +118,8 @@
     color: var(--primary);
   }
   
-  .data-table {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  
-  th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #64748b;
-  }
-  
-  tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .status {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  
   .status-admitted { background-color: #fef3c7; color: #d97706; }
   .status-discharged { background-color: #dcfce7; color: #16a34a; }
   .status-pending { background-color: #dbeafe; color: #2563eb; }
   
-  .btn {
-    padding: 8px 15px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-  
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-  }
-  
-  .btn-outline:hover {
-    background-color: var(--primary);
-    color: white;
-  }
   </style>

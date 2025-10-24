@@ -116,35 +116,6 @@
     font-size: 28px;
   }
   
-  .btn {
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--primary-dark);
-  }
-  
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    padding: 6px 12px;
-  }
-  
-  .btn-outline:hover {
-    background-color: var(--primary);
-    color: white;
-  }
   
   .doctors-grid {
     display: grid;
@@ -203,17 +174,6 @@
   .stat {
     display: flex;
     flex-direction: column;
-  }
-  
-  .stat-value {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--dark);
-  }
-  
-  .stat-label {
-    font-size: 12px;
-    color: #64748b;
   }
   
   .doctor-actions {

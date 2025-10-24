@@ -814,7 +814,7 @@ const scheduleNewSurgery = () => {
 
 const calculateEndTime = (startTime: string, duration: number): string => {
   const [hours, minutes] = startTime.split(':').map(Number)
-  const totalMinutes = hours * 60 + minutes + duration
+  const totalMinutes = hours! * 60 + minutes! + duration
   const endHours = Math.floor(totalMinutes / 60) % 24
   const endMinutes = totalMinutes % 60
   return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`
@@ -861,104 +861,6 @@ onMounted(() => {
   padding:20px;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.header h1 {
-    color: var(--dark);
-    font-size: 28px;
-}
-
-.btn {
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-}
-
-.btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    padding: 6px 12px;
-}
-
-.btn-outline:hover {
-    background-color: var(--primary);
-    color: white;
-}
-
-.data-table {
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #64748b;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-
-
-/* 統計卡片 */
-.stats-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border-left: 4px solid transparent;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
 .stat-icon {
     width: 50px;
     height: 50px;
@@ -976,77 +878,6 @@ tr:last-child td {
 .available .stat-icon { background-color: var(--secondary); }
 .maintenance .stat-icon { background-color: #f59e0b; }
 .today .stat-icon { background-color: var(--primary); }
-
-
-
-.filters-section {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-
-/* 狀態篩選 */
-.status-filter {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.filter-title {
-    font-weight: 600;
-    color: var(--dark);
-    min-width: 80px;
-    padding-top: 5px;
-    font-size: 14px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    flex: 1;
-}
-
-.filter-btn {
-    padding: 8px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: white;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-    white-space: nowrap;
-    font-weight: 500;
-}
-
-.filter-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #f8fafc;
-}
-
-.filter-btn.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
-.filter-btn.active:hover {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-}
 
 /* 手術室管理特定樣式 */
 .operating-rooms-view {
@@ -1492,33 +1323,7 @@ tr:last-child td {
   margin-top: 2px;
 }
 
-/* 狀態標籤 */
-.status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
 
-.status-available {
-  background: #dcfce7;
-  color: var(--secondary);
-}
-
-.status-in-use {
-  background: #dbeafe;
-  color: var(--primary);
-}
-
-.status-maintenance {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-.status-cleaning {
-  background: #e0e7ff;
-  color: #8b5cf6;
-}
 
 /* 日期導航 */
 .date-navigation {
@@ -1617,10 +1422,6 @@ tr:last-child td {
     gap: 4px;
   }
   
-  .btn-sm {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
 }
 
 /* 手術詳情樣式 */
@@ -1647,27 +1448,8 @@ tr:last-child td {
   gap: 12px;
 }
 
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
 
-.detail-item label {
-  font-weight: 600;
-  color: #64748b;
-  font-size: 14px;
-}
 
-.detail-item span {
-  color: var(--dark);
-  font-size: 14px;
-}
-
-/* 模態框尺寸調整 */
-.modal-content.large {
-  max-width: 800px;
-}
 
 /* 表單區段樣式 */
 .form-section {
