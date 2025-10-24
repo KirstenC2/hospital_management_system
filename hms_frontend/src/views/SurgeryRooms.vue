@@ -4,6 +4,9 @@
       <h1>手術室管理</h1>
       <!-- <p>總手術室數量: {{ stats }}</p> -->
       <div class="header-actions">
+        <button class="btn btn-primary" @click="showNewRoomModal = true">
+          <i class="fas fa-plus"></i> 新增手術室
+        </button>
         <button class="btn btn-primary" @click="showScheduleModal = true">
           <i class="fas fa-calendar-plus"></i> 預約手術
         </button>
@@ -441,6 +444,14 @@
         </div>
       </div>
     </div>
+        <CreateSurgeryRoomModal
+          :show="showNewRoomModal || !!editingRoom"
+          :room="editingRoom"
+          @update:show="handleModalShowChange"
+          @close="handleModalClose"
+          @save="handleSaveRoom"
+        /> 
+    
 
     <!-- 手術詳情模態框 -->
     <div v-if="selectedSurgery" class="modal-overlay" @click="selectedSurgery = null">
@@ -514,7 +525,7 @@ import surgeryRoomsService from '@/services/surgery_rooms_api';
 import type { SurgeryRoom } from '@/services/surgery_rooms_api';
 import type { Surgery } from '@/services/surgery_rooms_api';
 import type { OperatingRoom } from '@/services/surgery_rooms_api';
-
+import CreateSurgeryRoomModal from '@/components/CreateSurgeryRoomModal.vue';
 
 // // 模擬數據
 // const operatingRooms = ref<OperatingRoom[]>([
@@ -588,8 +599,10 @@ import type { OperatingRoom } from '@/services/surgery_rooms_api';
 
 const viewMode = ref<'grid' | 'list'>('grid')
 const showScheduleModal = ref(false)
+const showNewRoomModal = ref(false)
 const selectedSurgery = ref<Surgery | null>(null)
 const currentDate = ref('2024-01-18')
+const editingRoom = ref<OperatingRoom | null>(null);
 
 const newSurgery = ref({
   patientId: '',
@@ -602,6 +615,39 @@ const newSurgery = ref({
   priority: 'normal',
   notes: ''
 })
+
+// Modal 处理方法
+const handleModalShowChange = (show: boolean) => {
+  if (!show) {
+    showNewRoomModal.value = false;
+    editingRoom.value = null;
+  }
+};
+
+const handleModalClose = () => {
+  showNewRoomModal.value = false;
+  editingRoom.value = null;
+};
+
+const handleSaveRoom = async (roomData: any) => {
+  try {
+    if (editingRoom.value) {
+      console.log('Editing room:', editingRoom.value);
+      console.log('Room data:', roomData);
+      // 更新手术室
+      // await surgeryRoomsService.updateSurgeryRoom(editingRoom.value.id, roomData);
+    } else {
+      console.log('Creating room:', roomData);
+      // 创建手术室
+      await surgeryRoomsService.createSurgeryRoom(roomData);
+    }
+    await refreshData();
+  } catch (error: any) {
+    console.error('保存手术室失败:', error);
+    alert(`保存失败: ${error.message || '请重试'}`);
+  }
+};
+
 
 const operatingRooms = ref<SurgeryRoom[]>([])
 const loadSurgeryRoomsStats = async () => {
@@ -693,6 +739,10 @@ const selectRoom = (room: OperatingRoom) => {
 const scheduleSurgery = (room: OperatingRoom) => {
   newSurgery.value.roomId = room.id
   showScheduleModal.value = true
+}
+
+const createNewRoom = () => {
+  showNewRoomModal.value = true
 }
 
 const completeSurgery = (room: OperatingRoom) => {

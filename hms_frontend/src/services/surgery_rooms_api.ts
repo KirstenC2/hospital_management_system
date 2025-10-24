@@ -77,7 +77,7 @@ class SurgeryRoomsService {
 
   // 创建手术室
   async createSurgeryRoom(data: CreateSurgeryRoomDto): Promise<SurgeryRoom> {
-    return await api.post('/surgery-rooms', data);
+    return await api.post('/surgery-rooms/new', data);
   }
 
   async updateStatus(roomId: string, status: string): Promise<void> {
