@@ -2,6 +2,7 @@
   <div class="operating-rooms-view">
     <div class="header">
       <h1>手術室管理</h1>
+      <!-- <p>總手術室數量: {{ stats }}</p> -->
       <div class="header-actions">
         <button class="btn btn-primary" @click="showScheduleModal = true">
           <i class="fas fa-calendar-plus"></i> 預約手術
@@ -155,7 +156,7 @@
                 預約
               </button>
               <button 
-                v-if="room.status === 'in-use'" 
+                v-if="room.status === 'in_use'" 
                 class="btn btn-sm btn-success"
                 @click.stop="completeSurgery(room)"
               >
@@ -234,7 +235,7 @@
                       預約
                     </button>
                     <button 
-                      v-if="room.status === 'in-use'" 
+                      v-if="room.status === 'in_use'" 
                       class="btn btn-sm btn-success"
                       @click="completeSurgery(room)"
                     >
@@ -508,106 +509,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import surgeryRoomsService from '@/services/surgery_rooms_api';
+import type { SurgeryRoom } from '@/services/surgery_rooms_api';
+import type { Surgery } from '@/services/surgery_rooms_api';
+import type { OperatingRoom } from '@/services/surgery_rooms_api';
 
-interface Surgery {
-  id: string
-  patientId: string
-  patientName: string
-  roomId: string
-  roomName: string
-  type: string
-  surgeonId: string
-  surgeon: string
-  date: string
-  startTime: string
-  endTime: string
-  duration: number
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
-  priority: 'normal' | 'high' | 'urgent'
-  notes?: string
-}
 
-interface OperatingRoom {
-  id: string
-  name: string
-  status: 'available' | 'in-use' | 'maintenance' | 'cleaning'
-  size: string
-  equipment: string[]
-  cleaningTime: number
-  currentSurgery?: Surgery
-  nextSurgery?: Surgery
-}
-
-// 模擬數據
-const operatingRooms = ref<OperatingRoom[]>([
-  {
-    id: 'OR1',
-    name: '手術室一',
-    status: 'in-use',
-    size: '大型',
-    equipment: ['麻醉機', '監護儀', '腹腔鏡', '超聲刀'],
-    cleaningTime: 30,
-    currentSurgery: {
-      id: 'S1',
-      patientId: 'P001',
-      patientName: '張小明',
-      roomId: 'OR1',
-      roomName: '手術室一',
-      type: 'major',
-      surgeonId: 'D1',
-      surgeon: '陳小美',
-      date: '2024-01-18',
-      startTime: '08:00',
-      endTime: '12:00',
-      duration: 240,
-      status: 'in-progress',
-      priority: 'high',
-      notes: '腹腔鏡膽囊切除術'
-    }
-  },
-  {
-    id: 'OR2',
-    name: '手術室二',
-    status: 'available',
-    size: '中型',
-    equipment: ['麻醉機', '監護儀', '關節鏡'],
-    cleaningTime: 25,
-    nextSurgery: {
-      id: 'S2',
-      patientId: 'P002',
-      patientName: '李美華',
-      roomId: 'OR2',
-      roomName: '手術室二',
-      type: 'elective',
-      surgeonId: 'D2',
-      surgeon: '張偉強',
-      date: '2024-01-18',
-      startTime: '14:00',
-      endTime: '15:30',
-      duration: 90,
-      status: 'scheduled',
-      priority: 'normal',
-      notes: '膝關節鏡檢查'
-    }
-  },
-  {
-    id: 'OR3',
-    name: '手術室三',
-    status: 'maintenance',
-    size: '小型',
-    equipment: ['麻醉機', '監護儀'],
-    cleaningTime: 20
-  },
-  {
-    id: 'OR4',
-    name: '手術室四',
-    status: 'available',
-    size: '大型',
-    equipment: ['麻醉機', '監護儀', '神經導航', '顯微鏡'],
-    cleaningTime: 35
-  }
-])
+// // 模擬數據
+// const operatingRooms = ref<OperatingRoom[]>([
+//   {
+//     id: 'OR1',
+//     name: '手術室一',
+//     status: 'in_use',
+//     size: '大型',
+//     equipment: ['麻醉機', '監護儀', '腹腔鏡', '超聲刀'],
+//     cleaningTime: 30,
+//     currentSurgery: {
+//       id: 'S1',
+//       patientId: 'P001',
+//       patientName: '張小明',
+//       roomId: 'OR1',
+//       roomName: '手術室一',
+//       type: 'major',
+//       surgeonId: 'D1',
+//       surgeon: '陳小美',
+//       date: '2024-01-18',
+//       startTime: '08:00',
+//       endTime: '12:00',
+//       duration: 240,
+//       status: 'in-progress',
+//       priority: 'high',
+//       notes: '腹腔鏡膽囊切除術'
+//     }
+//   },
+//   {
+//     id: 'OR2',
+//     name: '手術室二',
+//     status: 'available',
+//     size: '中型',
+//     equipment: ['麻醉機', '監護儀', '關節鏡'],
+//     cleaningTime: 25,
+//     nextSurgery: {
+//       id: 'S2',
+//       patientId: 'P002',
+//       patientName: '李美華',
+//       roomId: 'OR2',
+//       roomName: '手術室二',
+//       type: 'elective',
+//       surgeonId: 'D2',
+//       surgeon: '張偉強',
+//       date: '2024-01-18',
+//       startTime: '14:00',
+//       endTime: '15:30',
+//       duration: 90,
+//       status: 'scheduled',
+//       priority: 'normal',
+//       notes: '膝關節鏡檢查'
+//     }
+//   },
+//   {
+//     id: 'OR3',
+//     name: '手術室三',
+//     status: 'maintenance',
+//     size: '小型',
+//     equipment: ['麻醉機', '監護儀'],
+//     cleaningTime: 20
+//   },
+//   {
+//     id: 'OR4',
+//     name: '手術室四',
+//     status: 'available',
+//     size: '大型',
+//     equipment: ['麻醉機', '監護儀', '神經導航', '顯微鏡'],
+//     cleaningTime: 35
+//   }
+// ])
 
 const viewMode = ref<'grid' | 'list'>('grid')
 const showScheduleModal = ref(false)
@@ -626,6 +603,25 @@ const newSurgery = ref({
   notes: ''
 })
 
+const operatingRooms = ref<SurgeryRoom[]>([])
+const loadSurgeryRoomsStats = async () => {
+  try {
+    stats.value = await surgeryRoomsService.getStats();
+  } catch (error) {
+    console.error('加载手术室失败:', error);
+    alert('加载手术室列表失败');
+  }
+};
+
+const loadAllOperatingRooms = async () => {
+  try {
+    operatingRooms.value = await surgeryRoomsService.getAllSurgeryRooms();
+  } catch (error) {
+    console.error('加载手术室失败:', error);
+    alert('加载手术室列表失败');
+  }
+}
+
 // 模擬可用數據
 const availablePatients = ref([
   { id: 'P001', name: '張小明', diagnosis: '高血壓' },
@@ -640,25 +636,7 @@ const surgeons = ref([
 ])
 
 // 統計數據
-const stats = computed(() => {
-  const totalRooms = operatingRooms.value.length
-  const availableRooms = operatingRooms.value.filter(room => room.status === 'available').length
-  const inUseRooms = operatingRooms.value.filter(room => room.status === 'in-use').length
-  const maintenanceRooms = operatingRooms.value.filter(room => room.status === 'maintenance').length
-  const todaySurgeries = operatingRooms.value.reduce((count, room) => {
-    if (room.currentSurgery?.date === currentDate.value) count++
-    if (room.nextSurgery?.date === currentDate.value) count++
-    return count
-  }, 0)
-
-  return {
-    totalRooms,
-    availableRooms,
-    inUseRooms,
-    maintenanceRooms,
-    todaySurgeries
-  }
-})
+let stats = ref<any>({})
 
 // 可用手術室
 const availableRooms = computed(() => 
@@ -681,7 +659,7 @@ const upcomingSurgeries = computed(() => {
 const getStatusText = (status: string) => {
   const statusMap: { [key: string]: string } = {
     'available': '可用',
-    'in-use': '使用中',
+    'in_use': '使用中',
     'maintenance': '維護中',
     'cleaning': '清潔中'
   }
@@ -732,10 +710,13 @@ const completeSurgery = (room: OperatingRoom) => {
 
 const completeMaintenance = (room: OperatingRoom) => {
   room.status = 'available'
+  surgeryRoomsService.updateStatus(room.id, 'available')
 }
 
 const setMaintenance = (room: OperatingRoom) => {
   room.status = 'maintenance'
+  console.log('set maintenance', room)
+  surgeryRoomsService.updateStatus(room.id, 'maintenance')
   room.currentSurgery = undefined
   room.nextSurgery = undefined
 }
@@ -773,7 +754,7 @@ const startSurgery = (surgery: Surgery) => {
   const room = operatingRooms.value.find(r => r.id === surgery.roomId)
   if (room) {
     room.currentSurgery = surgery
-    room.status = 'in-use'
+    room.status = 'in_use'
     surgery.status = 'in-progress'
   }
 }
@@ -851,6 +832,8 @@ const refreshData = () => {
 onMounted(() => {
   // 設置默認日期為今天
   const today = new Date()
+  loadSurgeryRoomsStats();
+  loadAllOperatingRooms();
   newSurgery.value.date = today.toISOString().split('T')[0]!
   currentDate.value = today.toISOString().split('T')[0]!
 })
