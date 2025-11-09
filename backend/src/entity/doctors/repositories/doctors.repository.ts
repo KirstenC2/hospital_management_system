@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Doctor } from '../entities/doctors.entity';
+import { Doctors } from '../entities/doctors.entity';
 import { Department } from 'src/entity/departments/entities/departments.entity';
 
 @Injectable()
 export class DoctorsRepository {
     constructor(
-        @InjectModel(Doctor)
-        private doctorsModel: typeof Doctor,
+        @InjectModel(Doctors)
+        private doctorsModel: typeof Doctors,
     ) {}
 
     async findAll(): Promise<any> {

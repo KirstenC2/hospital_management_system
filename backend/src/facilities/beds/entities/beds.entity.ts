@@ -3,7 +3,8 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasOne } from 's
 import { Department } from 'src/entity/departments/entities/departments.entity';
 import { BedStatus } from 'src/facilities/beds/entities/beds_status.entity';
 import { Patient } from 'src/entity/patients/entities/patients.entity';
-import { Doctor } from 'src/entity/doctors/entities/doctors.entity';
+import { Doctors } from 'src/entity/doctors/entities/doctors.entity';
+import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
 
 @Table({ tableName: 'beds', timestamps: true })
 export class Bed extends Model<Bed> {
@@ -43,7 +44,7 @@ export class Bed extends Model<Bed> {
   })
   departmentId: number;
 
-  @ForeignKey(() => Doctor)
+  @ForeignKey(() => Doctors)
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -71,12 +72,12 @@ export class Bed extends Model<Bed> {
   @BelongsTo(() => Department)
   department: Department;
 
-  @BelongsTo(() => Doctor)
-  attendingDoctor: Doctor;
+  @BelongsTo(() => Doctors)
+  attendingDoctor: Doctors;
 
   @BelongsTo(() => BedStatus)
   status: BedStatus;
 
-  @HasOne(() => Patient)
-  patient: Patient;
+  @HasOne(() => InPatient)
+  patient: InPatient;
 }

@@ -11,11 +11,14 @@ import { BedsModule } from './facilities/beds/beds.module';
 import { BedStatus } from './facilities/beds/entities/beds_status.entity';
 import { Bed } from './facilities/beds/entities/beds.entity';
 import { Patient } from './entity/patients/entities/patients.entity';
-import { Doctor } from './entity/doctors/entities/doctors.entity';
+import { InPatient } from './entity/patients/inpatients/entities/inpatients.entity';
+import { Doctors } from './entity/doctors/entities/doctors.entity';
 import { Department } from './entity/departments/entities/departments.entity';
 import { DepartmentsModule } from './entity/departments/departments.module';
 import { PatientsModule } from './entity/patients/patients.module';
 import { DoctorsModule } from './entity/doctors/doctors.module';
+import { MedicalRecordsModule } from './medical_records/medical_records.module';
+import { MedicalRecord } from './medical_records/entities/medical_records.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -37,8 +40,10 @@ import { DoctorsModule } from './entity/doctors/doctors.module';
           Bed,
           BedStatus,
           Patient,
-          Doctor,
+          InPatient,
+          Doctors,
           Department,
+          MedicalRecord
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -52,6 +57,7 @@ import { DoctorsModule } from './entity/doctors/doctors.module';
     DepartmentsModule,
     PatientsModule,
     DoctorsModule,
+    MedicalRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

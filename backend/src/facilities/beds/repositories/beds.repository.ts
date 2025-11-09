@@ -14,6 +14,10 @@ export class BedsRepository {
         return this.bedsModel.findAll(options);
     }
 
+    async getBedById(id: number): Promise<any> {
+        return this.bedsModel.findByPk(id);
+    }
+
     async count(options?: any): Promise<number> {
     const result = await this.bedsModel.count(options);
     // If result is a number, return it directly

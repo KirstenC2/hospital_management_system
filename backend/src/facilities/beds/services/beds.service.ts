@@ -10,6 +10,10 @@ export class BedsService {
     return this.bedsRepository.findAll();
   }
 
+  async getBedById(id: number): Promise<any> {
+    return this.bedsRepository.getBedById(id);
+  }
+
   async count(): Promise<number> {
     return this.bedsRepository.count();
   }

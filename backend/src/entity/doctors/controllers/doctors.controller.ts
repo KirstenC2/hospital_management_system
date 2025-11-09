@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
 import { DoctorsService } from '../services/doctors.service';
-import { Doctor } from '../entities/doctors.entity';
+import { Doctors } from '../entities/doctors.entity';
 import { CreateDoctorDto } from '../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../dto/update-doctor.dto';
 
@@ -9,7 +9,7 @@ export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
   @Get('all')
-  async findAll(): Promise<Doctor[]> {
+  async findAll(): Promise<Doctors[]> {
     return this.doctorsService.findAll();
   }
 
@@ -19,12 +19,12 @@ export class DoctorsController {
   }
 
   @Post('new')
-  async create(@Body() doctor: CreateDoctorDto): Promise<Doctor> {
+  async create(@Body() doctor: CreateDoctorDto): Promise<Doctors> {
     return this.doctorsService.create(doctor);
   }
 
   @Put('update/:id')
-  async update(@Param('id') id: number, @Body() doctor: UpdateDoctorDto): Promise<Doctor> {
+  async update(@Param('id') id: number, @Body() doctor: UpdateDoctorDto): Promise<Doctors> {
     return this.doctorsService.update(id, doctor);
   }
 }

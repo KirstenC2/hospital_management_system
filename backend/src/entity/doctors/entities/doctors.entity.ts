@@ -7,8 +7,8 @@ import { Bed } from 'src/facilities/beds/entities/beds.entity';
   tableName: 'doctors', timestamps: true,
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
- })
-export class Doctor extends Model<Doctor> {
+ }) 
+export class Doctors extends Model<Doctors> {
   @Column({
     primaryKey: true,
     autoIncrement: true,

@@ -1,8 +1,13 @@
 // entities/patient.entity.ts
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import { Bed } from 'src/facilities/beds/entities/beds.entity';
+import { Table, Column, Model, DataType, HasOne } from 'sequelize-typescript';
+import { InPatient } from '../inpatients/entities/inpatients.entity';
 
-@Table({ tableName: 'patients', timestamps: true })
+@Table({ 
+  tableName: 'patients',
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+})
 export class Patient extends Model<Patient> {
   @Column({
     type: DataType.INTEGER,
@@ -14,58 +19,60 @@ export class Patient extends Model<Patient> {
   @Column({
     type: DataType.STRING(100),
     allowNull: false,
+    field: 'name'
   })
   name: string;
 
   @Column({
     type: DataType.STRING(10),
     allowNull: false,
+    field: 'gender'
   })
-  gender: string; // '男', '女'
+  gender: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    field: 'age'
   })
   age: number;
 
   @Column({
-    type: DataType.DATE,
-    allowNull: false,
-    field: 'admission_date'
+    type: DataType.DATEONLY,
+    allowNull: true,
+    field: 'birth_date'
   })
-  admissionDate: Date;
+  birthDate?: Date;
+
+  @Column({
+    type: DataType.STRING(20),
+    allowNull: true,
+    field: 'phone'
+  })
+  phone?: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true,
+    field: 'address'
   })
-  diagnosis: string; // 診斷
+  address?: string;
 
   @Column({
-    type: DataType.STRING(50),
+    type: DataType.STRING(100),
     allowNull: true,
-    field: 'care_level'
+    field: 'emergency_contact'
   })
-  careLevel: string; // '一級護理', '特級護理'
-
-  @ForeignKey(() => Bed)
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    unique: true,
-    field: 'bed_id'
-  })
-  bedId: number;
+  emergencyContact?: string;
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-    field: 'is_active'
+    type: DataType.STRING(20),
+    allowNull: true,
+    field: 'emergency_phone'
   })
-  isActive: boolean;
+  emergencyPhone?: string;
 
-  @BelongsTo(() => Bed)
-  bed: Bed;
+  // Relation to InPatient
+  @HasOne(() => InPatient)
+  inPatient?: InPatient;
 }
