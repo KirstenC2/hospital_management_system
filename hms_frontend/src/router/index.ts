@@ -20,6 +20,12 @@ const router = createRouter({
       component: Patients,
     },
     {
+      path: '/patient/:id',
+      name: 'PatientDetail',
+      component: () => import('@/views/PatientDetails.vue'),
+      props: true
+    },
+    {
       path: "/medical-records",
       name: "MedicalRecords",
       component: MedicalRecords,
