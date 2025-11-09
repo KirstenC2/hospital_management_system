@@ -1,7 +1,7 @@
 <template>
     <div class="patients-view">
         <h1 class="header">{{ patient.name }}</h1>
-        <a-row v-if="patient.id" :gutter="24" class="mb-6">
+        <a-row v-if="patient.id" :gutter="16" class="mb-6">
             <a-col :xs="24" :lg="16">
                 <a-card :title="isEditing ? '編輯基本資料' : '基本資料'">
                     <a-form v-if="isEditing" :model="editablePatient" layout="vertical">
@@ -225,6 +225,8 @@ const fetchPatientDetail = async () => {
         console.error('獲取病人詳情失敗:', error)
     }
 }
+
+
 
 // 返回邏輯
 const goBack = () => {

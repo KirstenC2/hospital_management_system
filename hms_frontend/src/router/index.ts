@@ -5,7 +5,7 @@ import Doctors from "@/views/Doctors.vue";
 import Beds from "@/views/Beds.vue";
 import MedicalRecords from "@/views/MedicalRecords.vue";
 import SurgeryRooms from "@/views/SurgeryRooms.vue";
-import Staffs from '@/views/Staffs.vue';
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -31,14 +31,15 @@ const router = createRouter({
       component: MedicalRecords,
     },
     {
+      path: "/medical-records/:id",
+      name: "MedicalRecordDetails",
+      component: () => import('@/views/MedicalRecordsDetails.vue'),
+      props: true
+    },
+    {
       path: "/doctors",
       name: "Doctors",
       component: Doctors,
-    },
-    {
-      path: "/staffs",
-      name: "Staffs",
-      component: Staffs,
     },
     {
       path: "/beds",

@@ -27,7 +27,6 @@
           { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt', label: '首頁' },
           { name: 'Patients', path: '/patients', icon: 'fas fa-user-injured', label: '病人管理' },
           { name: 'Doctors', path: '/doctors', icon: 'fas fa-user-md', label: '醫生管理' },
-          { name: 'Doctors', path: '/staffs', icon: 'fas fa-user-md', label: '員工管理' },
           { name: 'Beds', path: '/beds', icon: 'fas fa-user-md', label: '病床管理' },
           { name: 'MedicalRecords', path: '/medical-records', icon: 'fas fa-user-md', label: '病歷管理'},
           { name: 'SurgeryRooms', path: '/surgery-rooms', icon: 'fas fa-user-md', label: '手術室管理'}

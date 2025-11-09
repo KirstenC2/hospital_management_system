@@ -51,6 +51,10 @@ class DoctorsService {
         return await api.put(`/doctors/update/${id}`, data);
     }
 
+    async getHeadcount(): Promise<any> {
+        return await api.get('/doctors/department/headcount');
+    }
+
 }
 
 export default new DoctorsService();

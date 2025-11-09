@@ -62,17 +62,7 @@ export interface CreateOutPatientDto {
     diagnosis: string;
 }
 
-export interface MedicalRecord {
-    id: string;
-    diagnosis: string;
-    symptoms: string;
-    priority: string;
-    status: string;
-    doctor: {
-        name: string;
-        title: string;
-    };
-}
+
 class PatientsService {
     // 获取所有患者
     async getAllPatients(): Promise<Inpatient[]> {

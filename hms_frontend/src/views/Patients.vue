@@ -49,9 +49,6 @@
                 <td>{{ patient.emergencyPhone || '-' }}</td>
                 <td>
                   <div class="action-buttons">
-                    <button class="btn btn-sm btn-outline" @click="editPatient(patient)">
-                      編輯
-                    </button>
                     <button class="btn btn-sm btn-outline" @click="openPatientInNewTab(patient)">
                       查看
                     </button>
@@ -93,29 +90,6 @@ const filteredPatients = computed(() => {
   if (selectedStatus.value === 'all') return patients.value
   return patients.value.filter(patient => patient.status === selectedStatus.value)
 })
-
-// Update the status options if needed
-const statusOptions = [
-  { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' },
-  // Add more status options as needed
-]
-
-// Update the view/edit functions
-const viewPatient = (patient: Inpatient) => {
-  console.log('View patient:', patient)
-  // Implement view logic
-}
-
-const editPatient = (patient: Inpatient) => {
-  console.log('編輯病人 ID:', patient.id);
-  
-  // 💡 關鍵修改：使用 router.push 導航到編輯頁面
-  router.push({
-    name: 'PatientEdit', // 假設您的編輯頁面路由名稱為 'PatientEdit'
-    params: { id: patient.id } // 傳遞病人 ID 作為路由參數
-  });
-}
 
 const openPatientInNewTab = (patient: Inpatient) => {
   router.push({

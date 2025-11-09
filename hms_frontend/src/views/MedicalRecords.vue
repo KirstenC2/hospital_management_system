@@ -1,451 +1,108 @@
 <template>
     <div class="medical-records-view">
-        <div class="header">
-            <h1>病歷管理</h1>
-            <div class="header-actions">
-                <button class="btn btn-primary" @click="showAddRecordModal = true">
-                    <i class="fas fa-plus"></i> 新增病歷
-                </button>
-                <button class="btn btn-outline" @click="refreshRecords">
-                    <i class="fas fa-sync-alt"></i> 刷新
-                </button>
-            </div>
-        </div>
-        <!-- 統計卡片 -->
-        <div class="stats-cards">
-            <div class="stat-card total">
-                <div class="stat-icon">
-                    <i class="fas fa-file-medical"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value">{{ stats.totalRecords }}</div>
-                    <div class="stat-label">總病歷數</div>
-                </div>
-            </div>
-            <div class="stat-card active">
-                <div class="stat-icon">
-                    <i class="fas fa-user-injured"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value">{{ stats.activeRecords }}</div>
-                    <div class="stat-label">治療中</div>
-                </div>
-            </div>
-            <div class="stat-card completed">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value">{{ stats.completedRecords }}</div>
-                    <div class="stat-label">已完成</div>
-                </div>
-            </div>
-            <div class="stat-card critical">
-                <div class="stat-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value">{{ stats.criticalRecords }}</div>
-                    <div class="stat-label">重症病例</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 搜索和篩選 -->
-        <div class="filters-section">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input v-model="searchQuery" type="text" placeholder="搜尋病人姓名、病歷號、診斷..." @input="handleSearch">
-            </div>
-
-            <div class="filter-group">
-                <div class="filter-title">狀態篩選:</div>
-                <div class="filter-buttons">
-                    <button v-for="status in statusOptions" :key="status.value" class="filter-btn"
-                        :class="{ active: selectedStatus === status.value }" @click="selectStatus(status.value)">
-                        {{ status.label }}
-                    </button>
-                    <button class="filter-btn" :class="{ active: selectedStatus === 'all' }"
-                        @click="selectStatus('all')">
-                        全部
-                    </button>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <div class="filter-title">科室篩選:</div>
-                <div class="filter-buttons">
-                    <button v-for="dept in departmentOptions" :key="dept.value" class="filter-btn"
-                        :class="{ active: selectedDepartment === dept.value }" @click="selectDepartment(dept.value)">
-                        {{ dept.label }}
-                    </button>
-                    <button class="filter-btn" :class="{ active: selectedDepartment === 'all' }"
-                        @click="selectDepartment('all')">
-                        全部
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="content">
-
-
-            <!-- 病歷表格 -->
-            <div class="records-section">
-                <div class="section-header">
-                    <div class="section-title">
-                        <i class="fas fa-list"></i>
-                        <span>病歷列表 ({{ filteredRecords.length }})</span>
-                    </div>
-                    <div class="table-actions">
-                        <button class="btn btn-outline btn-sm" @click="exportRecords">
-                            <i class="fas fa-download"></i>
-                            匯出
-                        </button>
-                        <button class="btn btn-outline btn-sm" @click="printRecords">
-                            <i class="fas fa-print"></i>
-                            列印
-                        </button>
-                    </div>
-                </div>
-
-                <div class="data-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>病歷號</th>
-                                <th>病人資訊</th>
-                                <th>診斷</th>
-                                <th>主治醫生</th>
-                                <th>科室</th>
-                                <th>狀態</th>
-                                <th>入院日期</th>
-                                <th>最後更新</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="record in paginatedRecords" :key="record.id">
-                                <td class="record-id">
-                                    <div class="id-number">{{ record.id }}</div>
-                                    <div v-if="record.priority === 'high'" class="priority-badge high">
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        緊急
-                                    </div>
-                                </td>
-                                <td class="patient-info">
-                                    <div class="patient-name">{{ record.patientName }}</div>
-                                    <div class="patient-details">
-                                        {{ record.patientGender }} / {{ record.patientAge }}歲
-                                        <span v-if="record.patientPhone">• {{ record.patientPhone }}</span>
-                                    </div>
-                                </td>
-                                <td class="diagnosis-cell">
-                                    <div class="diagnosis">{{ record.diagnosis }}</div>
-                                    <div v-if="record.symptoms" class="symptoms">
-                                        {{ record.symptoms }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="doctor-info">
-                                        <div class="doctor-name">{{ record.attendingDoctor }}</div>
-                                        <div class="doctor-department">{{ record.doctorDepartment }}</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="department-badge">{{ record.department }}</span>
-                                </td>
-                                <td>
-                                    <span class="status" :class="`status-${record.status}`">
-                                        {{ getStatusText(record.status) }}
-                                    </span>
-                                </td>
-                                <td>{{ record.admissionDate }}</td>
-                                <td>
-                                    <div class="update-info">
-                                        <div>{{ record.lastUpdate }}</div>
-                                        <div v-if="record.updateBy" class="update-by">by {{ record.updateBy }}</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-outline" @click="viewRecord(record)">
-                                            查看
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline" @click="editRecord(record)">
-                                            編輯
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-primary" @click="addProgress(record)">
-                                            新增進度
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-success" @click="completeRecord(record)">
-                                            完成
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- 分頁 -->
-                    <div class="pagination" v-if="filteredRecords.length > 0">
-                        <div class="pagination-info">
-                            顯示第 {{ startIndex + 1 }} - {{ endIndex }} 筆，共 {{ filteredRecords.length }} 筆記錄
-                        </div>
-                        <div class="pagination-controls">
-                            <button class="pagination-btn" :disabled="currentPage === 1" @click="currentPage--">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-
-                            <span class="pagination-page">
-                                第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁
-                            </span>
-
-                            <button class="pagination-btn" :disabled="currentPage === totalPages"
-                                @click="currentPage++">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+        <h1>病歷列表</h1>
+        <a-card :bodyStyle="{ padding: 0 }">
+            <a-table
+                :columns="medicalRecordColumns"
+                :data-source="paginatedRecords"
+                :loading="loading"
+                :pagination="false"
+                row-key="id"
+                size="middle"
+            >
+                <template #title>
+                    <div class="table-header">
+                        <span class="section-title">病歷列表 ({{ filteredRecords?.length || 0 }})</span>
+                        <div class="table-actions">
+                            <a-button @click="exportRecords">
+                                <template #icon><DownloadOutlined /></template>
+                                匯出
+                            </a-button>
+                            <a-button @click="printRecords">
+                                <template #icon><PrinterOutlined /></template>
+                                列印
+                            </a-button>
                         </div>
                     </div>
+                </template>
 
-                    <div v-if="filteredRecords.length === 0" class="empty-state">
-                        <i class="fas fa-file-medical fa-3x"></i>
-                        <p>沒有找到符合條件的病歷記錄</p>
-                        <button class="btn btn-primary" @click="showAddRecordModal = true">
-                            <i class="fas fa-plus"></i>
-                            新增病歷
-                        </button>
-                    </div>
-                </div>
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column">
+                        <template v-if="column.key === 'record_id'">
+                            <div class="id-number">{{ record.id }}</div>
+                            <a-tag v-if="record.priority === 'high'" color="red" class="priority-tag">
+                                <template #icon><ExclamationCircleOutlined /></template>
+                                緊急
+                            </a-tag>
+                        </template>
+
+                        <template v-else-if="column.key === 'patient_info'">
+                            <div class="patient-name">{{ record.patient.name }}</div>
+                            <div class="patient-details">
+                                {{ record.patient.gender }} / {{ record.patient.age }}歲
+                            </div>
+                        </template>
+
+                        <template v-else-if="column.key === 'status'">
+                             <a-tag :color="getStatusColor(record.status)">
+                                {{ getStatusText(record.status) }}
+                            </a-tag>
+                        </template>
+
+
+                        <template v-else-if="column.key === 'action'">
+                            <a-space>
+                                <a-button size="small" @click="openMedicalRecordPage(record)">
+                                    <template #icon><EyeOutlined /></template>
+                                    查看
+                                </a-button>
+                                <!-- <a-button size="small" @click="editRecord(record)">
+                                    <template #icon><EditOutlined /></template>
+                                    編輯
+                                </a-button>
+                                <a-button size="small" type="primary" @click="addProgress(record)">
+                                    <template #icon><PlusOutlined /></template>
+                                    進度
+                                </a-button>
+                                <a-popconfirm title="確定完成該病歷嗎?" @confirm="completeRecord(record)">
+                                    <a-button size="small" type="ghost" class="btn-success">
+                                        <template #icon><CheckOutlined /></template>
+                                        完成
+                                    </a-button>
+                                </a-popconfirm> -->
+                            </a-space>
+                        </template>
+                    </template>
+                </template>
+            </a-table>
+            
+            <div class="pagination-footer">
+                 <a-pagination
+                    v-model:current="currentPage"
+                    :total="filteredRecords?.length || 0" 
+                    :page-size="pageSize"
+                    show-size-changer
+                    show-quick-jumper
+
+                />
             </div>
-        </div>
+        </a-card>
 
-        <!-- 新增病歷模態框 -->
-        <div v-if="showAddRecordModal" class="modal-overlay" @click="showAddRecordModal = false">
-            <div class="modal-content large" @click.stop>
-                <div class="modal-header">
-                    <h3>新增病歷</h3>
-                    <button class="close-btn" @click="showAddRecordModal = false">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form @submit.prevent="addNewRecord">
-                        <div class="form-section">
-                            <h4>病人基本資訊</h4>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>姓名:</label>
-                                    <input v-model="newRecord.patientName" type="text" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>性別:</label>
-                                    <select v-model="newRecord.patientGender" required>
-                                        <option value="男">男</option>
-                                        <option value="女">女</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>年齡:</label>
-                                    <input v-model="newRecord.patientAge" type="number" min="0" max="120" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>身份證字號:</label>
-                                    <input v-model="newRecord.patientId" type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label>電話:</label>
-                                    <input v-model="newRecord.patientPhone" type="tel">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h4>醫療資訊</h4>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>主治醫生:</label>
-                                    <select v-model="newRecord.attendingDoctor" required>
-                                        <option v-for="doctor in doctors" :key="doctor.id" :value="doctor.name">
-                                            {{ doctor.name }} - {{ doctor.specialty }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>科室:</label>
-                                    <select v-model="newRecord.department" required>
-                                        <option v-for="dept in departmentOptions" :key="dept.value" :value="dept.label">
-                                            {{ dept.label }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>主要診斷:</label>
-                                <input v-model="newRecord.diagnosis" type="text" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label>症狀描述:</label>
-                                <textarea v-model="newRecord.symptoms" rows="3" placeholder="請詳細描述病人的症狀..."></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label>過敏史:</label>
-                                <input v-model="newRecord.allergies" type="text" placeholder="無已知過敏">
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>優先級:</label>
-                                    <select v-model="newRecord.priority">
-                                        <option value="normal">一般</option>
-                                        <option value="high">緊急</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>狀態:</label>
-                                    <select v-model="newRecord.status" required>
-                                        <option value="active">治療中</option>
-                                        <option value="completed">已完成</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">新增病歷</button>
-                            <button type="button" class="btn btn-outline" @click="showAddRecordModal = false">
-                                取消
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- 病歷詳情模態框 -->
-        <div v-if="selectedRecord" class="modal-overlay" @click="selectedRecord = null">
-            <div class="modal-content xlarge" @click.stop>
-                <div class="modal-header">
-                    <h3>病歷詳情 - {{ selectedRecord.id }}</h3>
-                    <button class="close-btn" @click="selectedRecord = null">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="record-details">
-                        <div class="detail-section">
-                            <h4>病人資訊</h4>
-                            <div class="detail-grid">
-                                <div class="detail-item">
-                                    <label>姓名:</label>
-                                    <span>{{ selectedRecord.patientName }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>性別/年齡:</label>
-                                    <span>{{ selectedRecord.patientGender }} / {{ selectedRecord.patientAge }}歲</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>電話:</label>
-                                    <span>{{ selectedRecord.patientPhone || '未提供' }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>身份證字號:</label>
-                                    <span>{{ selectedRecord.patientId || '未提供' }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="detail-section">
-                            <h4>醫療資訊</h4>
-                            <div class="detail-grid">
-                                <div class="detail-item">
-                                    <label>主治醫生:</label>
-                                    <span>{{ selectedRecord.attendingDoctor }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>科室:</label>
-                                    <span>{{ selectedRecord.department }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>診斷:</label>
-                                    <span class="diagnosis-text">{{ selectedRecord.diagnosis }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>症狀:</label>
-                                    <span>{{ selectedRecord.symptoms || '無詳細症狀描述' }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>過敏史:</label>
-                                    <span>{{ selectedRecord.allergies || '無已知過敏' }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="detail-section">
-                            <h4>治療進度</h4>
-                            <div class="progress-timeline">
-                                <div v-for="progress in selectedRecord.progressNotes" :key="progress.id"
-                                    class="progress-item">
-                                    <div class="progress-date">{{ progress.date }}</div>
-                                    <div class="progress-content">
-                                        <div class="progress-title">{{ progress.title }}</div>
-                                        <div class="progress-description">{{ progress.description }}</div>
-                                        <div class="progress-doctor">記錄醫生: {{ progress.doctor }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
-
 <script setup lang="ts">
+import type { MedicalRecord } from '@/services/medical_records_api'
 import { ref, computed, onMounted } from 'vue'
+import MedicalRecordService, { type ProgressNote } from '@/services/medical_records_api'
+import {
+    PlusOutlined, ReloadOutlined,
+    CheckCircleOutlined, ExclamationCircleOutlined, DownloadOutlined, PrinterOutlined,
+    EyeOutlined, EditOutlined, CheckOutlined,
+} from '@ant-design/icons-vue'
+import router from '@/router'
+// 移除未使用的 Ant Design 導入，保持簡潔
+// import { Table, Tag, Button, InputSearch, Select, Row, Col, Card, PageHeader, Statistic, RadioGroup, Pagination, Space, Popconfirm } from 'ant-design-vue';
 
-interface ProgressNote {
-    id: string
-    date: string
-    title: string
-    description: string
-    doctor: string
-}
-
-interface MedicalRecord {
-    id: string
-    patientName: string
-    patientGender: string
-    patientAge: number
-    patientId?: string
-    patientPhone?: string
-    diagnosis: string
-    symptoms?: string
-    allergies?: string
-    attendingDoctor: string
-    doctorDepartment: string
-    department: string
-    status: 'active' | 'completed' | 'archived'
-    priority: 'normal' | 'high'
-    admissionDate: string
-    lastUpdate: string
-    updateBy?: string
-    progressNotes: ProgressNote[]
-}
-
-// 狀態選項
-const statusOptions = [
-    { value: 'active', label: '治療中' },
-    { value: 'completed', label: '已完成' },
-    { value: 'archived', label: '已歸檔' }
-]
 
 // 科室選項
 const departmentOptions = [
@@ -458,88 +115,60 @@ const departmentOptions = [
     { value: 'neurology', label: '神經科' }
 ]
 
-// 醫生數據
-const doctors = [
-    { id: '1', name: '王大明', specialty: '內科' },
-    { id: '2', name: '陳小美', specialty: '外科' },
-    { id: '3', name: '林志雄', specialty: '兒科' },
-    { id: '4', name: '吳美麗', specialty: '婦產科' },
-    { id: '5', name: '張偉強', specialty: '骨科' },
-    { id: '6', name: '劉心怡', specialty: '心臟科' }
+const medicalRecordColumns = [  
+    {
+        title: '病歷編號',
+        dataIndex: 'id',
+        // 🚨 修復: 將 key 更改為 'record_id' 以匹配模板
+        key: 'record_id', 
+    },
+    {
+        title: '病人資訊',
+        dataIndex: 'patientName',
+        // 🚨 新增 key: 'patient_info' 以匹配模板
+        key: 'patient_info', 
+    },
+    {
+        title: '診斷',
+        dataIndex: 'diagnosis',
+        key: 'diagnosis',
+    },
+    {
+        title: '狀態',
+        dataIndex: 'status',
+        key: 'status',
+    },
+    {
+        title: '優先級',
+        dataIndex: 'priority',
+        key: 'priority',
+    },
+    {
+        title: '入院日期',
+        dataIndex: 'admissionDate',
+        key: 'admissionDate',
+    },
+    {
+        title: '操作', // 模板中使用了 action key, 這裡需要一個 action 欄位
+        key: 'action', 
+    },
+    // 移除 '最後更新' 和 '更新人' 欄位，因為模板中沒有對應的 bodyCell 處理
+    // 如果需要顯示，請在模板中為其添加 #bodyCell 邏輯
+]
+
+const statusOptions = [
+    { value: 'active', label: '治療中' },
+    { value: 'completed', label: '已完成' },
+    { value: 'archived', label: '已歸檔' }
+]
+
+const priorityOptions = [
+    { value: 'normal', label: '正常' },
+    { value: 'high', label: '高' }
 ]
 
 // 模擬病歷數據
-const medicalRecords = ref<MedicalRecord[]>([
-    {
-        id: 'MR2024001',
-        patientName: '張小明',
-        patientGender: '男',
-        patientAge: 45,
-        patientId: 'A123456789',
-        patientPhone: '0912-345-678',
-        diagnosis: '高血壓二期',
-        symptoms: '頭暈、心悸、血壓偏高',
-        allergies: '無',
-        attendingDoctor: '王大明',
-        doctorDepartment: '內科',
-        department: '內科',
-        status: 'active',
-        priority: 'normal',
-        admissionDate: '2024-01-15',
-        lastUpdate: '2024-01-18 14:30',
-        updateBy: '王大明',
-        progressNotes: [
-            {
-                id: '1',
-                date: '2024-01-15 10:00',
-                title: '初診評估',
-                description: '病人血壓160/95mmHg，開立降血壓藥物處方',
-                doctor: '王大明'
-            },
-            {
-                id: '2',
-                date: '2024-01-18 14:30',
-                title: '複診檢查',
-                description: '血壓改善至140/85mmHg，調整藥物劑量',
-                doctor: '王大明'
-            }
-        ]
-    },
-    {
-        id: 'MR2024002',
-        patientName: '李美華',
-        patientGender: '女',
-        patientAge: 28,
-        patientPhone: '0933-456-789',
-        diagnosis: '急性闌尾炎',
-        symptoms: '右下腹疼痛、發燒、噁心',
-        attendingDoctor: '陳小美',
-        doctorDepartment: '外科',
-        department: '外科',
-        status: 'completed',
-        priority: 'high',
-        admissionDate: '2024-01-16',
-        lastUpdate: '2024-01-17 16:45',
-        updateBy: '陳小美',
-        progressNotes: [
-            {
-                id: '1',
-                date: '2024-01-16 09:15',
-                title: '急診入院',
-                description: '確診急性闌尾炎，安排緊急手術',
-                doctor: '陳小美'
-            },
-            {
-                id: '2',
-                date: '2024-01-16 14:00',
-                title: '手術完成',
-                description: '闌尾切除手術順利完成，病人情況穩定',
-                doctor: '陳小美'
-            }
-        ]
-    }
-])
-
+let medicalRecords = ref<MedicalRecord[]>([])
 const searchQuery = ref('')
 const selectedStatus = ref<string | 'all'>('all')
 const selectedDepartment = ref<string | 'all'>('all')
@@ -547,6 +176,8 @@ const showAddRecordModal = ref(false)
 const selectedRecord = ref<MedicalRecord | null>(null)
 const currentPage = ref(1)
 const pageSize = 10
+const progressNotes = ref<ProgressNote[]>([])
+let loading = ref(false)
 
 const newRecord = ref({
     patientName: '',
@@ -558,17 +189,47 @@ const newRecord = ref({
     symptoms: '',
     allergies: '',
     attendingDoctor: '王大明',
-    department: '內科',
+    department: '內科', // 中文 Label
     status: 'active',
     priority: 'normal'
 })
 
-// 統計數據
+// 🚨 邏輯優化: 篩選後的數據，所有分頁和計數都應基於此
+const filteredRecords = computed(() => {
+    let records = medicalRecords.value || []; // 確保從 array 開始
+
+    // 1. 搜尋過濾
+    if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase();
+        records = records.filter(r =>
+            r.patient.name.toLowerCase().includes(query) ||
+            r.id.toLowerCase().includes(query) ||
+            r.diagnosis.toLowerCase().includes(query)
+        );
+    }
+
+    // 2. 狀態篩選
+    if (selectedStatus.value !== 'all') {
+        records = records.filter(r => r.status === selectedStatus.value);
+    }
+
+    // 3. 科室篩選
+    if (selectedDepartment.value !== 'all') {
+        // 使用 doctorDepartment 的 value 進行過濾
+        records = records.filter(r => r.doctor.departmentId === selectedDepartment.value);
+    }
+
+    return records;
+})
+
+
+// 統計數據 (依賴原始數據)
 const stats = computed(() => {
-    const totalRecords = medicalRecords.value.length
-    const activeRecords = medicalRecords.value.filter(r => r.status === 'active').length
-    const completedRecords = medicalRecords.value.filter(r => r.status === 'completed').length
-    const criticalRecords = medicalRecords.value.filter(r => r.priority === 'high').length
+    const records = medicalRecords.value || [];
+    const totalRecords = records.length
+    const activeRecords = records.filter(r => r.status === 'active').length
+    const completedRecords = records.filter(r => r.status === 'completed').length
+    const criticalRecords = records.filter(r => r.priority === 'high').length
 
     return {
         totalRecords,
@@ -578,45 +239,14 @@ const stats = computed(() => {
     }
 })
 
-// 過濾後的記錄
-const filteredRecords = computed(() => {
-    let filtered = medicalRecords.value
 
-    // 搜索過濾
-    if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(record =>
-            record.patientName.toLowerCase().includes(query) ||
-            record.id.toLowerCase().includes(query) ||
-            record.diagnosis.toLowerCase().includes(query) ||
-            record.attendingDoctor.toLowerCase().includes(query)
-        )
-    }
-
-    // 狀態過濾
-    if (selectedStatus.value !== 'all') {
-        filtered = filtered.filter(record => record.status === selectedStatus.value)
-    }
-
-    // 科室過濾
-    if (selectedDepartment.value !== 'all') {
-        const deptLabel = departmentOptions.find(d => d.value === selectedDepartment.value)?.label
-        filtered = filtered.filter(record => record.department === deptLabel)
-    }
-
-    return filtered
-})
-
-// 分頁數據
+// 🚨 邏輯優化: 分頁數據 (依賴已篩選的數據)
 const paginatedRecords = computed(() => {
+    const recordsToPaginate = filteredRecords.value
     const start = (currentPage.value - 1) * pageSize
     const end = start + pageSize
-    return filteredRecords.value.slice(start, end)
+    return recordsToPaginate.slice(start, end)
 })
-
-const totalPages = computed(() => Math.ceil(filteredRecords.value.length / pageSize))
-const startIndex = computed(() => (currentPage.value - 1) * pageSize)
-const endIndex = computed(() => Math.min(currentPage.value * pageSize, filteredRecords.value.length))
 
 const getStatusText = (status: string) => {
     const statusMap: { [key: string]: string } = {
@@ -625,6 +255,15 @@ const getStatusText = (status: string) => {
         'archived': '已歸檔'
     }
     return statusMap[status] || status
+}
+
+const getStatusColor = (status: string) => {
+    const colorMap: { [key: string]: string } = {
+        'active': 'blue',
+        'completed': 'green',
+        'archived': 'red'
+    }
+    return colorMap[status] || 'default'
 }
 
 const handleSearch = () => {
@@ -641,8 +280,11 @@ const selectDepartment = (department: string | 'all') => {
     currentPage.value = 1
 }
 
-const viewRecord = (record: MedicalRecord) => {
-    selectedRecord.value = record
+const openMedicalRecordPage = (record: MedicalRecord) => {
+    router.push({
+        name: 'MedicalRecordDetails',
+        params: { id: record.id }
+    });
 }
 
 const editRecord = (record: MedicalRecord) => {
@@ -654,10 +296,11 @@ const addProgress = (record: MedicalRecord) => {
     if (note) {
         const newProgress: ProgressNote = {
             id: Date.now().toString(),
-            date: new Date().toLocaleString('zh-TW'),
+            record_id: record.id,
+            record_date: new Date(),
+            doctor_id: '3',
             title: '進度更新',
             description: note,
-            doctor: '當前醫生'
         }
         record.progressNotes.push(newProgress)
         record.lastUpdate = new Date().toLocaleString('zh-TW')
@@ -676,17 +319,19 @@ const completeRecord = (record: MedicalRecord) => {
 const addNewRecord = () => {
     const newRecordData: MedicalRecord = {
         id: `MR2024${String(medicalRecords.value.length + 1).padStart(3, '0')}`,
-        patientName: newRecord.value.patientName,
-        patientGender: newRecord.value.patientGender,
-        patientAge: newRecord.value.patientAge,
-        patientId: newRecord.value.patientId || undefined,
-        patientPhone: newRecord.value.patientPhone || undefined,
+        patient: {
+            name: newRecord.value.patientName,
+            gender: newRecord.value.patientGender,
+            age: newRecord.value.patientAge,
+            phone: newRecord.value.patientPhone
+        },
         diagnosis: newRecord.value.diagnosis,
         symptoms: newRecord.value.symptoms || undefined,
         allergies: newRecord.value.allergies || undefined,
-        attendingDoctor: newRecord.value.attendingDoctor,
-        doctorDepartment: departmentOptions.find(d => d.label === newRecord.value.department)?.value || 'internal',
-        department: newRecord.value.department,
+        doctor: {
+            name: newRecord.value.attendingDoctor,
+            departmentId: departmentOptions.find(d => d.label === newRecord.value.department)?.value || 'internal',
+        },
         status: newRecord.value.status as 'active' | 'completed',
         priority: newRecord.value.priority as 'normal' | 'high',
         admissionDate: new Date().toISOString().split('T')[0]!,
@@ -719,6 +364,7 @@ const resetNewRecordForm = () => {
 
 const refreshRecords = () => {
     console.log('刷新病歷數據')
+    fetchMedicalRecords() // 刷新時應該重新獲取數據
 }
 
 const exportRecords = () => {
@@ -729,8 +375,21 @@ const printRecords = () => {
     window.print()
 }
 
+const fetchMedicalRecords = async () => {
+    // 考慮在數據載入時設置 loading 狀態，這裡為了簡潔省略
+    try {
+        const response = await MedicalRecordService.getAllMedicalRecords()
+        medicalRecords.value = response
+    } catch (error) {
+        console.error('獲取病歷失敗:', error)
+        // 🚨 關鍵修復: 確保在 API 失敗時，medicalRecords 仍是空陣列，避免 length 錯誤
+        medicalRecords.value = [] 
+    }
+}
+
 onMounted(() => {
     console.log('病歷管理頁面加載完成')
+    fetchMedicalRecords()
 })
 </script>
 
