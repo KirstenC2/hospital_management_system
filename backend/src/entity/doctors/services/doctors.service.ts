@@ -13,6 +13,10 @@ export class DoctorsService {
         return this.doctorsRepository.count();
     }
 
+    async headcount(): Promise<any> {
+        return this.doctorsRepository.headcount();
+    }
+
     async create(doctor: any): Promise<any> {
         return this.doctorsRepository.create(doctor);
     }

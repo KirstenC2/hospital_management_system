@@ -1,8 +1,8 @@
 // backend/src/entity/medical-records/controllers/medical-records.controller.ts
 import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
-import { MedicalRecordsService } from './medical_records.service';
-import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from './dtos/medical_record.dto';
-import { MedicalRecord } from './entities/medical_records.entity';
+import { MedicalRecordsService } from '../services/medical_records.service';
+import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from '../dtos/medical_record.dto';
+import { MedicalRecord } from '../entities/medical_records.entity';
 
 @Controller('medical-records')
 export class MedicalRecordsController {
@@ -23,8 +23,8 @@ export class MedicalRecordsController {
     return this.medicalRecordsService.findByPatientId(parseInt(patientId));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<MedicalRecord> {
+  @Get('/info')
+  findOne(@Query('id') id: string): Promise<MedicalRecord> {
     return this.medicalRecordsService.findOne(parseInt(id));
   }
 

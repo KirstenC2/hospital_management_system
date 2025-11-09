@@ -1,7 +1,8 @@
 // backend/src/entity/medical-records/entities/medical-record.entity.ts
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
 import { Patient } from 'src/entity/patients/entities/patients.entity';
 import { Doctors } from 'src/entity/doctors/entities/doctors.entity';
+import { ProgressNote } from 'src/progress_note/entities/progress_note.entity';
 
 
 @Table({ tableName: 'medical_records' })
@@ -79,4 +80,7 @@ export class MedicalRecord extends Model {
 
   @BelongsTo(() => Doctors)
   doctor: Doctors;
+
+  @HasMany(() => ProgressNote)
+  progressNotes: ProgressNote[];    
 }

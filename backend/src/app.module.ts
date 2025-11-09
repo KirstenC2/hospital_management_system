@@ -19,6 +19,8 @@ import { PatientsModule } from './entity/patients/patients.module';
 import { DoctorsModule } from './entity/doctors/doctors.module';
 import { MedicalRecordsModule } from './medical_records/medical_records.module';
 import { MedicalRecord } from './medical_records/entities/medical_records.entity';
+import { ProgressNoteModule } from './progress_note/progress_note.module';
+import { ProgressNote } from './progress_note/entities/progress_note.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -43,7 +45,8 @@ import { MedicalRecord } from './medical_records/entities/medical_records.entity
           InPatient,
           Doctors,
           Department,
-          MedicalRecord
+          MedicalRecord,
+          ProgressNote  
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -58,6 +61,7 @@ import { MedicalRecord } from './medical_records/entities/medical_records.entity
     PatientsModule,
     DoctorsModule,
     MedicalRecordsModule,
+    ProgressNoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

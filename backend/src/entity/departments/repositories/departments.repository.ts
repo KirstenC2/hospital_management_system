@@ -18,6 +18,10 @@ export class DepartmentsRepository {
         return this.departmentsModel.findAll({ attributes: ['id', 'displayName'] });
     }
 
+    async findDepartmentById(id: string): Promise<any> {
+        return this.departmentsModel.findByPk(id);
+    }
+
     async count(): Promise<number> {
         return this.departmentsModel.count();
     }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { DepartmentsService } from '../services/departments.service';
 import { Department } from '../entities/departments.entity';
 import { CreateDepartmentDto } from '../dto/create-department.dto';
@@ -10,6 +10,11 @@ export class DepartmentsController {
   @Get('all')
   async findAll(): Promise<Department[]> {
     return this.departmentsService.findAll();
+  }
+
+  @Get('info')
+  async findDepartmentById(@Query('id') id: string): Promise<Department> {
+    return this.departmentsService.findDepartmentById(id);
   }
 
   @Get('list')

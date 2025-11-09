@@ -26,7 +26,7 @@ export class MedicalRecordsRepository {
 
   async findById(id: number): Promise<MedicalRecord> {
     const record = await this.medicalRecordModel.findByPk(id, {
-      include: ['patient', 'doctor'],
+      include: ['patient', 'doctor','progressNotes'],
     });
     if (!record) {
       throw new Error(`Medical record with ID ${id} not found`);

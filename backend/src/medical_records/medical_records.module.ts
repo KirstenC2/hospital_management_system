@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { MedicalRecordsService } from './medical_records.service';
-import { MedicalRecordsController } from './medical_records.controller';
+import { MedicalRecordsService } from './services/medical_records.service';
+import { MedicalRecordsController } from './controllers/medical_records.controller';
 import { MedicalRecord } from './entities/medical_records.entity';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MedicalRecordsRepository } from './repositories/medical_record.repository';

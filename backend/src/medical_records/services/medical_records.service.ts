@@ -1,8 +1,8 @@
 // backend/src/entity/medical-records/services/medical-records.service.ts
 import { Injectable } from '@nestjs/common';
-import { MedicalRecordsRepository } from './repositories/medical_record.repository';
-import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from './dtos/medical_record.dto';
-import { MedicalRecord } from './entities/medical_records.entity';
+import { MedicalRecordsRepository } from '../repositories/medical_record.repository';
+import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from '../dtos/medical_record.dto';
+import { MedicalRecord } from '../entities/medical_records.entity';
 
 @Injectable()
 export class MedicalRecordsService {
@@ -30,5 +30,9 @@ export class MedicalRecordsService {
 
   async findByPatientId(patientId: number): Promise<MedicalRecord[]> {
     return this.medicalRecordsRepository.findByPatientId(patientId);
+  }
+
+  async getMedicalRecordById(id: string): Promise<MedicalRecord> {
+    return this.medicalRecordsRepository.findById(+id);
   }
 }

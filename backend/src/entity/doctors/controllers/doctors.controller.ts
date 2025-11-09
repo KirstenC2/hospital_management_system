@@ -18,6 +18,11 @@ export class DoctorsController {
     return this.doctorsService.count();
   }
 
+  @Get('department/headcount')
+  async headcount(): Promise<any> {
+    return this.doctorsService.headcount();
+  }
+
   @Post('new')
   async create(@Body() doctor: CreateDoctorDto): Promise<Doctors> {
     return this.doctorsService.create(doctor);
