@@ -123,15 +123,6 @@ import {
 } from 'ant-design-vue';
 import { PlusOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons-vue';
 
-interface DepartmentCount {
-  count: string;
-  departmentId: number;
-}
-
-interface DepartmentMapping {
-  id: number;
-  displayName: string;
-}
 
 // ------------------- 數據和狀態 -------------------
 
@@ -313,14 +304,15 @@ onMounted(async () => {
 <style scoped>
 /* 刪除原有的 .doctors-grid 相關樣式，專注於表格和組件樣式 */
 .search-bar-container {
-    padding: 20px;
-    background-color: #f8fafc;
-    border-radius: 8px;
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 8px;
 }
+
 .mb-3 {
-    margin-bottom: 12px;
-    font-weight: 500;
-    color: #333;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #333;
 }
 
 .doctors-view {
@@ -344,14 +336,5 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
-/* 確保表格標題區塊的間距 */
-.ant-table-title {
-  padding: 16px !important;
-  border-bottom: 1px solid #f0f0f0;
-}
 
-/* 覆蓋 AntD 表格中自定義單元格的樣式 */
-:deep(.ant-table-body) .ant-table-cell {
-  padding: 12px 16px;
-}
 </style>

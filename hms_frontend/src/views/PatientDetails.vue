@@ -1,6 +1,6 @@
 <template>
     <div class="patients-view">
-        <h1 class="header">{{ patient.name }}</h1>
+        <h1>{{ patient.name }}</h1>
         <a-row v-if="patient.id" :gutter="16" class="mb-6">
             <a-col :xs="24" :lg="16">
                 <a-card :title="isEditing ? '編輯基本資料' : '基本資料'">
@@ -108,8 +108,22 @@
             </a-tabs>
         </a-card>
 
+        <a-card v-if="patient.id" title="住院紀錄" class="mb-6">
+            <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading"
+                rowKey="id">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'status'">
+                        <a-tag :color="getStatusColor(record.status)">
+                            {{ getStatusText(record.status) }}
+                        </a-tag>
+                    </template>
+                </template>
+            </a-table>
+        </a-card>
+
         <a-spin v-else class="w-full text-center py-12" tip="載入中..." />
     </div>
+
 </template>
 
 <script setup lang="ts">
@@ -145,6 +159,7 @@ const patient = ref<BasePatient>({} as BasePatient)
 // 可編輯的病人數據副本，用於編輯模式
 const editablePatient = ref<BasePatient>({} as BasePatient)
 const medicalRecords = ref([])
+const inpatientRecords = ref([])
 const loading = ref(false)
 const saving = ref(false) // 儲存狀態
 const activeTab = ref('records')
@@ -162,18 +177,33 @@ const medicalRecordColumns = [
     { title: '狀態', dataIndex: 'status', key: 'status' }
 ]
 
+const inpatientRecordColumns = [
+    { title: '住院單號', dataIndex: 'id', key: 'id' },
+    { title: '診斷', dataIndex: 'diagnosis', key: 'diagnosis' },
+    { title: '床位', dataIndex: 'bedId', key: 'bedId' },
+    { title: '入院日期', dataIndex: 'admissionDate', key: 'admissionDate' },
+    { title: '預計出院日期', dataIndex: 'expectedDischargeDate', key: 'expectedDischargeDate' },
+    { title: '狀態', dataIndex: 'status', key: 'status' }
+]
+
 // 狀態文字和顏色函數... (保持不變)
 const getStatusColor = (status: string) => {
     switch (status) {
-        case 'active': return 'green'
-        case 'inactive': return 'red'
+        case 'inpatient': return 'green'
+        case 'discharged': return 'red'
+        case 'transferred': return 'blue'
         default: return 'gray'
     }
 }
 const getStatusText = (status: string) => {
     switch (status) {
-        case 'active': return 'Active'
-        case 'inactive': return 'Inactive'
+        case 'inpatient': return '住院中'
+        case 'discharged': return '已出院'
+        case 'permitted-discharge': return '出院許可'
+        case 'waiting': return '等待入院'
+        case 'transferred': return '轉院'
+        case 'active': return '持續病症'
+        case 'inactive': return '已痊愈'
         default: return 'Unknown'
     }
 }
@@ -227,6 +257,16 @@ const fetchPatientDetail = async () => {
 }
 
 
+const fetchInpatientRecords = async () => {
+    try {
+        const patientId = router.currentRoute.value.params.id as string
+        const response = await PatientsService.getPatientRecordList(Number(patientId))
+        inpatientRecords.value = response
+        console.log(inpatientRecords.value)
+    } catch (error) {
+        console.error('獲取病歷記錄失敗:', error)
+    }
+}
 
 // 返回邏輯
 const goBack = () => {
@@ -254,6 +294,7 @@ const fetchMedicalRecords = async () => {
 onMounted(() => {
     fetchPatientDetail()
     fetchMedicalRecords()
+    fetchInpatientRecords()
 })
 </script>
 
