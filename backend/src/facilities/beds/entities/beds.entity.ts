@@ -29,13 +29,6 @@ export class Bed extends Model<Bed> {
   })
   floor: number;
 
-  @Column({
-    type: DataType.STRING(100),
-    allowNull: false,
-    field: 'room'
-  })
-  room: string;
-
   @ForeignKey(() => Department)
   @Column({
     type: DataType.INTEGER,
@@ -56,7 +49,7 @@ export class Bed extends Model<Bed> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    field: 'status_id'
+    field: 'bed_status_id'
   })
   statusId: number;
 

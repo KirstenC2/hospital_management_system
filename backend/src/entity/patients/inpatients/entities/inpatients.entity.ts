@@ -15,7 +15,7 @@ import { Patient } from '../../entities/patients.entity';
 import { Doctors } from 'src/entity/doctors/entities/doctors.entity';
 import { Bed } from 'src/facilities/beds/entities/beds.entity';
 
-@Table({ tableName: 'inpatients' })
+@Table({ tableName: 'inpatient_records' })
 export class InPatient extends Model {
   @PrimaryKey
   @AutoIncrement

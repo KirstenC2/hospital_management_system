@@ -2,7 +2,7 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { Bed } from './beds.entity';
 
-@Table({ tableName: 'bed_statuses', timestamps: true })
+@Table({ tableName: 'bed_status', timestamps: true })
 export class BedStatus extends Model<BedStatus> {
   @Column({
     type: DataType.INTEGER,

@@ -14,7 +14,11 @@ export class InPatientsRepository {
         return this.inpatientModel.findAll();
     }
 
-    async createPatient(createPatientDto: CreatePatientDto): Promise<InPatient> {
+    async getPatientRecordList(patientId: number): Promise<any[]> {
+        return this.inpatientModel.findAll({ where: { patientId } });
+    }
+
+    async createInpatientRecord(createPatientDto: CreatePatientDto): Promise<InPatient> {
         return this.inpatientModel.create(createPatientDto as any);
     }
 }

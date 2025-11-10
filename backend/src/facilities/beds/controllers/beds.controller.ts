@@ -11,6 +11,11 @@ export class BedsController {
     return this.bedsService.findAll();
   } 
 
+  @Get('available')
+  async available(): Promise<any> {
+    return this.bedsService.findAllAvailableBeds();
+  }
+
   @Get('total')
   async count(): Promise<number> {
     return this.bedsService.count();

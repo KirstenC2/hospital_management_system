@@ -2,16 +2,35 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Bed } from '../entities/beds.entity';
 import { Sequelize } from 'sequelize';
+import { BedStatus } from '../entities/beds_status.entity';
 
 @Injectable()
 export class BedsRepository {
     constructor(
         @InjectModel(Bed)
         private bedsModel: typeof Bed,
+        @InjectModel(BedStatus)
+        private bedStatusModel: typeof BedStatus,   
     ) {}
 
     async findAll(options?: any): Promise<any> {
         return this.bedsModel.findAll(options);
+    }
+
+    async findAllAvailableBeds(): Promise<any> {
+        return this.bedsModel.findAll({
+            include: [{
+                model: this.bedStatusModel,
+                as: 'status',
+                where: {
+                    status: 'available'
+                },
+                required: true
+            }],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        });
     }
 
     async getBedById(id: number): Promise<any> {

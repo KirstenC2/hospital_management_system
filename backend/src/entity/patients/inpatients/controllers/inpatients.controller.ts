@@ -12,9 +12,14 @@ export class InPatientsController {
     return await this.inpatientsService.getAllPatients();
   } 
 
+  @Get('records')
+  async getPatientRecordList(@Query('patient_id') patientId: number): Promise<any[]> {
+    return await this.inpatientsService.getPatientRecordList(patientId);
+  }
+
   @Post('new')
-  async createPatient(@Body() createPatientDto: CreatePatientDto): Promise<InPatient> {
-    return await this.inpatientsService.createPatient(createPatientDto);
+  async createInpatientRecord(@Body() createPatientDto: CreatePatientDto): Promise<InPatient> {
+    return await this.inpatientsService.createInpatientRecord(createPatientDto);
   }
 
 

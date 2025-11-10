@@ -16,14 +16,18 @@ export class InPatientsService {
         return this.inpatientsRepository.getAllPatients();
     }
 
-    async createPatient(createPatientDto: CreatePatientDto): Promise<InPatient> {
+    async getPatientRecordList(patientId: number): Promise<any[]> {
+        return this.inpatientsRepository.getPatientRecordList(patientId);
+    }
+
+    async createInpatientRecord(createPatientDto: CreatePatientDto): Promise<InPatient> {
         if(createPatientDto.bedId) {
             const bed = await this.bedsService.getBedById(createPatientDto.bedId);
             if(bed.dataValues.statusId !== 1) {
                 throw new Error('Bed is not available');
             }
         }
-        return this.inpatientsRepository.createPatient(createPatientDto);
+        return this.inpatientsRepository.createInpatientRecord(createPatientDto);
     }
 
 }

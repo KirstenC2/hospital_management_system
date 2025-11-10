@@ -1,7 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { PatientsService } from '../services/patients.service';
 import { GetPatientListDto } from '../dto/patients.dto';
-
+import { CreatePatientDto } from '../dto/patients.dto';
+  
 
 @Controller('patients')
 export class PatientsController {
@@ -15,5 +16,10 @@ export class PatientsController {
   @Get('info')
   async getPatientById(@Query('id') id: number) {
     return await this.patientsService.getPatientById(id);
+  }
+
+  @Post('new')
+  async createPatient(@Body() createPatientDto: CreatePatientDto) {
+    return await this.patientsService.createPatient(createPatientDto);
   }
 }
