@@ -85,28 +85,12 @@
                 </template>
                 詳情
               </a-button>
-              <a-button size="small" type="ghost" @click="editDoctor(record)">
-                <template #icon>
-                  <EditOutlined />
-                </template>
-                編輯
-              </a-button>
             </a-space>
           </template>
         </template>
 
       </a-table>
     </a-card>
-
-    <!-- 這裡將用於顯示醫生詳情的 Modal 或抽屜組件 -->
-    <a-modal v-model:visible="showDetailsModal" :title="selectedDoctor ? `${selectedDoctor.name} - 詳情` : '醫生詳情'"
-      :footer="null">
-      <p v-if="selectedDoctor" class="p-4">
-        正在查看 **{{ selectedDoctor.name }}** 的資料...
-        <br>科室：{{ selectedDoctor.department.displayName }}
-        <!-- <br>門診量：{{ selectedDoctor.appointmentCount }} -->
-      </p>
-    </a-modal>
   </div>
 </template>
 
@@ -122,6 +106,7 @@ import {
   InputSearch as AInputSearch, Modal as AModal
 } from 'ant-design-vue';
 import { PlusOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons-vue';
+import router from '@/router';
 
 
 // ------------------- 數據和狀態 -------------------
@@ -130,7 +115,6 @@ const doctors = ref<Doctor[]>([]);
 const departments = ref<DepartmentList[]>([]);
 const departmentDoctorsStat = ref<any[]>([]);
 const loading = ref(true);
-const showDetailsModal = ref(false);
 const selectedDoctor = ref<Doctor | null>(null);
 const showAddDoctorModal = ref(false);
 const searchQuery = ref('');
@@ -251,7 +235,7 @@ const fetchDepartmentDoctorsStat = async () => {
 
 const viewDoctor = (doctor: any) => {
   selectedDoctor.value = doctor;
-  showDetailsModal.value = true;
+  router.push({ name: 'DoctorDetail', params: { id: doctor.id } });
 };
 
 const editDoctor = (doctor: any) => {

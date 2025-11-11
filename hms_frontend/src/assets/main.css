@@ -60,11 +60,18 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    background-color: var(--primary-light);
+    padding: 20px;  
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+
 }
 
 .header h1 {
     color: var(--dark);
     font-size: 28px;
+    font-weight: 700;
+    margin: 0;
 }
 
 
@@ -217,6 +224,7 @@ body {
 .btn-danger:hover:not(:disabled) {
     background-color: var(--danger-dark);
 }
+
 
 /* 卡片樣式 */
 .card {

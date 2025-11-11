@@ -55,6 +55,9 @@ class DoctorsService {
         return await api.get('/doctors/department/headcount');
     }
 
+    async getDoctorById(id: string): Promise<Doctor> {
+        return await api.get(`/doctors/${id}`);
+    }
 }
 
 export default new DoctorsService();

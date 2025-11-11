@@ -1,10 +1,37 @@
 <template>
     <div class="patients-view">
-        <h1>{{ patient.name }}</h1>
+        <div class="header">
+            <h1>患者 - {{ patient.name }} - 個資</h1>
+            <div class="header-actions">
+                <a-button v-if="!isEditing" @click="startEditing" type="primary">
+                    <template #icon>
+                        <EditOutlined />
+                    </template>
+                    編輯
+                </a-button>
+                <template v-else>
+                    <a-button @click="cancelEditing" class="mr-2">
+                        <template #icon>
+                            <CloseOutlined />
+                        </template>
+                        取消
+                    </a-button>
+                    <a-button @click="saveChanges" type="primary" :loading="saving">
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>
+                        保存
+                    </a-button>
+                </template>
+            </div>
+        </div>
         <a-row v-if="patient.id" :gutter="16" class="mb-6">
             <a-col :xs="24" :lg="16">
-                <a-card :title="isEditing ? '編輯基本資料' : '基本資料'">
+
+                <a-card :title="isEditing ? '編輯基本資料' : '基本資料'" class="profile-card">
+
                     <a-form v-if="isEditing" :model="editablePatient" layout="vertical">
+
                         <a-row :gutter="16">
                             <a-col :span="24">
                                 <a-form-item label="病人 ID">
@@ -27,7 +54,8 @@
                             </a-col>
                             <a-col :span="12">
                                 <a-form-item label="年齡">
-                                    <a-input-number v-model:value="editablePatient.age" :min="0" :max="150" style="width: 100%;" />
+                                    <a-input-number v-model:value="editablePatient.age" :min="0" :max="150"
+                                        style="width: 100%;" />
                                 </a-form-item>
                             </a-col>
                             <a-col :span="12">
@@ -45,14 +73,14 @@
 
                     <a-row v-else :gutter="16">
                         <a-col :span="12">
-                            <a-descriptions bordered size="small" :column="1">
+                            <a-descriptions  size="small" :column="1">
                                 <a-descriptions-item label="病人 ID">{{ patient.id }}</a-descriptions-item>
                                 <a-descriptions-item label="姓名">{{ patient.name }}</a-descriptions-item>
                                 <a-descriptions-item label="性別">{{ patient.gender }}</a-descriptions-item>
                             </a-descriptions>
                         </a-col>
                         <a-col :span="12">
-                            <a-descriptions bordered size="small" :column="1">
+                            <a-descriptions size="small" :column="1">
                                 <a-descriptions-item label="年齡">{{ patient.age }}</a-descriptions-item>
                                 <a-descriptions-item label="電話">{{ patient.phone || '-' }}</a-descriptions-item>
                                 <a-descriptions-item label="地址">{{ patient.address || '-' }}</a-descriptions-item>
@@ -63,9 +91,9 @@
             </a-col>
 
             <a-col :xs="24" :lg="8">
-                <a-card :title="isEditing ? '編輯緊急聯絡人' : '緊急聯絡人'">
-                    <a-form v-if="isEditing" :model="editablePatient" layout="vertical">
-                        <a-form-item label="姓名">
+                <a-card :title="isEditing ? '編輯緊急聯絡人' : '緊急聯絡人'" class="emergency-card">
+                    <a-form v-if="isEditing" :model="editablePatient" layout="vertical" class="emergency-form">
+                        <a-form-item label="姓名" required>
                             <a-input v-model:value="editablePatient.emergencyContact" />
                         </a-form-item>
                         <a-form-item label="電話">
@@ -73,19 +101,21 @@
                         </a-form-item>
                     </a-form>
 
-                    <a-descriptions v-else bordered size="small" :column="1">
-                        <a-descriptions-item label="姓名">{{ editablePatient.emergencyContact || '-' }}</a-descriptions-item>
-                        <a-descriptions-item label="電話">{{ editablePatient.emergencyPhone || '-' }}</a-descriptions-item>
+                    <a-descriptions v-else size="small" :column="1" class="emergency-descriptions">
+                        <a-descriptions-item label="姓名">{{ editablePatient.emergencyContact || '-'
+                            }}</a-descriptions-item>
+                        <a-descriptions-item label="電話">{{ editablePatient.emergencyPhone || '-'
+                            }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
             </a-col>
         </a-row>
-        
-        <a-card v-if="patient.id" title="病歷記錄" class="mb-6">
+
+        <a-card v-if="patient.id" title="病歷記錄" class="card">
             <a-tabs v-model:activeKey="activeTab">
-                <a-tab-pane key="records" tab="病歷列表">
+                <a-tab-pane key="records" tab="病歷列表" class="card-body">
                     <a-table :columns="medicalRecordColumns" :data-source="medicalRecords" :loading="loading"
-                        rowKey="id">
+                        class="data-table" rowKey="id">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'status'">
                                 <a-tag :color="getStatusColor(record.status)">
@@ -108,9 +138,9 @@
             </a-tabs>
         </a-card>
 
-        <a-card v-if="patient.id" title="住院紀錄" class="mb-6">
-            <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading"
-                rowKey="id">
+        <a-card v-if="patient.id" title="住院紀錄" class="card">
+            <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading" rowKey="id"
+                class="data-table">
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'status'">
                         <a-tag :color="getStatusColor(record.status)">
@@ -228,7 +258,7 @@ const saveChanges = async () => {
     try {
         // 模擬 API 更新調用
         // **!!! 替換成實際的 PatientsService.updatePatient(editablePatient.value) !!!**
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await PatientsService.updatePatient(editablePatient.value)
 
         // 假設更新成功，用 editablePatient 的數據覆蓋 patient
         patient.value = { ...editablePatient.value }
@@ -303,20 +333,9 @@ onMounted(() => {
     padding: 24px;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.header h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
 .mb-6 {
     margin-bottom: 24px;
+
 }
 
 .mr-3 {
@@ -326,4 +345,149 @@ onMounted(() => {
 .ml-2 {
     margin-left: 8px;
 }
+
+.profile-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.profile-card :deep(.ant-card-head) {
+    background-color: #7eb0ae;
+    border-bottom: 1px solid #9ed2d0;
+    border-radius: 8px 8px 0 0;
+    padding: 12px 16px;
+}
+
+.profile-card :deep(.ant-card-head-title) {
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.profile-card :deep(.ant-card-body) {
+    padding: 16px;
+    
+}
+
+.profile-card :deep(.ant-descriptions) {
+    padding: 0px;
+}
+
+.profile-card :deep(.ant-descriptions-item-label) {
+    color: #06357653;
+    /* Red-800 */
+    font-weight: medium;
+    width: 40%;
+    padding: 6px;
+}
+
+.profile-card :deep(.ant-descriptions-item-content) {
+    border-radius: 6px;
+    padding: 6px;
+    width: 60%;
+    font-size: medium;
+    /* Soft red background on hover */
+}
+
+.emergency-card {
+    background-color: #fff5f6;
+    /* Light red background */
+    border: 1px solid #ffccd5;
+    /* Soft red border */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.emergency-card :deep(.ant-card-head) {
+    background-color: #fff1f2;
+    border-bottom: 1px solid #ffe4e6;
+    border-radius: 8px 8px 0 0;
+    padding: 12px 16px;
+}
+
+.emergency-card :deep(.ant-card-head-title) {
+    color: #e11d48;
+    /* Red-600 */
+    font-weight: bold;
+}
+
+.emergency-card :deep(.ant-form) {
+    padding: 16px;
+    
+}
+
+.emergency-card :deep(.ant-form-item) {
+    margin-bottom: 16px;
+}
+
+.emergency-card :deep(.ant-form-item-label > label) {
+    color: #c0325aff;
+    /* Red-800 */
+    font-weight: bold;
+}
+
+.emergency-card :deep(.ant-input) {
+    border-color: #fecdd3;
+    /* Red-200 */
+    border-radius: 6px;
+}
+
+.emergency-card :deep(.ant-input:hover),
+.emergency-card :deep(.ant-input:focus) {
+    border-color: #fda4af;
+    /* Red-300 */
+    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.1);
+    /* Red-500 with opacity */
+}
+
+/* For the view mode */
+.emergency-card :deep(.ant-descriptions) {
+    padding: 5px;
+    
+}
+
+
+.emergency-card :deep(.ant-descriptions-item-label) {
+    color: #78122f;
+    /* Red-800 */
+    font-weight: medium;
+    width: 40%;
+    padding: 6px;
+}
+
+.emergency-card :deep(.ant-descriptions-item-content) {
+    border-radius: 6px;
+    padding: 6px;
+    width: 60%;
+    font-size: medium;
+    /* Soft red background on hover */
+}
+
+.emergency-card :deep(.ant-descriptions-item) {
+    color: #4b5563;
+
+    /* Gray-600 */
+}
+
+/* Add some spacing between form items */
+.emergency-card :deep(.ant-form-item) {
+    margin-bottom: 16px;
+}
+
+/* For the card when in edit mode */
+.emergency-card.editing {
+    border-color: #fda4af;
+    /* Slightly darker border when editing */
+}
+
+/* Add transition for smooth hover effect */
+.emergency-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
 </style>

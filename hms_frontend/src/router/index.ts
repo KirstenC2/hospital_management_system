@@ -42,6 +42,12 @@ const router = createRouter({
       component: Doctors,
     },
     {
+      path: '/doctor/:id',
+      name: 'DoctorDetail',
+      component: () => import('@/views/DoctorDetails.vue'),
+      props: true
+    },
+    {
       path: "/beds",
       name: "Beds",
       component: Beds
