@@ -37,4 +37,8 @@ export class DoctorsRepository {
             where: { id }
         });
     }
+
+    async getDoctorById(id: number): Promise<any> {
+        return this.doctorsModel.findByPk(id);
+    }
 }

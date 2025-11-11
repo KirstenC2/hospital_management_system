@@ -22,5 +22,10 @@ export class InPatientsController {
     return await this.inpatientsService.createInpatientRecord(createPatientDto);
   }
 
+  @Get('doctor')
+  async getPatientsByDoctorId(@Query('doctor_id') doctorId: number): Promise<InPatient[]> {
+    return await this.inpatientsService.getPatientsByDoctorId(doctorId);
+  }
+
 
 }

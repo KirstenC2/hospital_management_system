@@ -1,4 +1,5 @@
 import { IsString, IsNumber, IsOptional, IsDateString, IsIn, MaxLength } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreatePatientDto {
   @IsString()
@@ -34,6 +35,11 @@ export class CreatePatientDto {
   @MaxLength(20)
   @IsOptional()
   emergencyPhone?: string;
+}
+
+export class UpdatePatientDto extends PartialType(CreatePatientDto) {
+  @IsNumber()
+  id: number;
 }
 
 export class GetPatientListDto {

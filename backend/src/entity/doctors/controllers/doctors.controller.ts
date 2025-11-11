@@ -32,4 +32,9 @@ export class DoctorsController {
   async update(@Param('id') id: number, @Body() doctor: UpdateDoctorDto): Promise<Doctors> {
     return this.doctorsService.update(id, doctor);
   }
+
+  @Get(':id')
+  async getDoctorById(@Param('id') id: number): Promise<Doctors> {
+    return this.doctorsService.getDoctorById(id);
+  }
 }

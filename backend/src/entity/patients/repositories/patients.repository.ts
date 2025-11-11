@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Patient } from '../entities/patients.entity';
 import { CreatePatientDto } from '../dto/patients.dto';
+import { UpdatePatientDto } from '../dto/patients.dto';
 
 @Injectable()
 export class PatientsRepository {
@@ -29,5 +30,22 @@ export class PatientsRepository {
             emergencyContact: createPatientDto.emergencyContact,
             emergencyPhone: createPatientDto.emergencyPhone
         }as Patient);
+    }
+
+    async updatePatient(updatePatientDto: UpdatePatientDto): Promise<any> {
+        return this.patientModel.update({
+            name: updatePatientDto.name,
+            gender: updatePatientDto.gender,
+            age: updatePatientDto.age,
+            birthDate: updatePatientDto.birthDate as Date,
+            phone: updatePatientDto.phone,
+            address: updatePatientDto.address,
+            emergencyContact: updatePatientDto.emergencyContact,
+            emergencyPhone: updatePatientDto.emergencyPhone
+        }as Patient, {
+            where: {
+                id: updatePatientDto.id
+            }
+        });
     }
 }

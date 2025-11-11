@@ -24,4 +24,8 @@ export class DoctorsService {
     async update(id: number, doctor: any): Promise<any> {
         return this.doctorsRepository.update(id, doctor);
     }
+
+    async getDoctorById(id: number): Promise<any> {
+        return this.doctorsRepository.getDoctorById(id);
+    }
 }

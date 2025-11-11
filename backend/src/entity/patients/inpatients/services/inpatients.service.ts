@@ -30,4 +30,8 @@ export class InPatientsService {
         return this.inpatientsRepository.createInpatientRecord(createPatientDto);
     }
 
+    async getPatientsByDoctorId(doctorId: number): Promise<InPatient[]> {
+        return this.inpatientsRepository.getPatientsByDoctorId(doctorId);
+    }
+
 }
