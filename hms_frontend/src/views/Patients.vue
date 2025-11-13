@@ -135,6 +135,7 @@
       </a-form>
     </a-modal>
   </div>
+  
 </template>
 
 <script setup lang="ts">
@@ -160,11 +161,13 @@ import {
   SyncOutlined
 } from '@ant-design/icons-vue';
 import PatientsService from '@/services/patients_api';
-import type { Inpatient } from '@/services/patients_api';
+import type { BasePatient } from '@/services/patients_api';
 import DoctorsService from '@/services/doctors_api';
 import type { Doctor } from '@/services/doctors_api';
 import BedsService from '@/services/beds_api';
 import type { Beds } from '@/services/beds_api';
+import DepartmentsService from '@/services/departments_api';
+import type { DepartmentList } from '@/services/departments_api';
 
 const AFormItem = AForm.Item;
 const ASelectOption = ASelect.Option;
@@ -174,14 +177,15 @@ const router = useRouter();
 const loading = ref(false);
 const confirmLoading = ref(false);
 const showAddPatientModal = ref(false);
-const patients = ref<Inpatient[]>([]);
+const patients = ref<BasePatient[]>([]);
 const doctors = ref<Doctor[]>([]);
 const beds = ref<Beds[]>([]);
+const departments = ref<DepartmentList[]>([]);
 // 新增狀態
 const showAdmissionModal = ref(false); // 控制住院 Modal 顯示
-const patientToAdmit = ref<Inpatient | null>(null); // 儲存待辦理住院的病人
+const patientToAdmit = ref<BasePatient | null>(null); // 儲存待辦理住院的病人
 const admissionLoading = ref(false); // 住院辦理按鈕的載入狀態
-
+const selectedDepartmentId = ref<number | 'all'>('all');
 // const inpatientRecords = ref<any[]>([]);
 // 新增住院表單數據
 const newAdmissionRecord = ref({
@@ -236,7 +240,7 @@ const columns = [
   },
 ];
 
-const newPatient = ref<Partial<Inpatient>>({
+const newPatient = ref<Partial<BasePatient>>({
   name: '',
   gender: 'male',
   age: 0,
@@ -251,7 +255,7 @@ const newPatient = ref<Partial<Inpatient>>({
 /**
  * 點擊「辦理住院」按鈕，打開住院表單 Modal
  */
-const initiateAdmission = (patient: Inpatient) => {
+const initiateAdmission = (patient: BasePatient) => {
   patientToAdmit.value = patient;
 
   // Initialize the form with default values
@@ -275,7 +279,15 @@ const initiateAdmission = (patient: Inpatient) => {
 const fetchPatients = async () => {
   try {
     loading.value = true;
-    const response = await PatientsService.getAllPatients();
+    // 假設 PatientsService.getAllPatients 支持傳入 departmentId 作為篩選條件
+    const params: { departmentId?: number } = {};
+    if (selectedDepartmentId.value !== 'all' && selectedDepartmentId.value !== undefined) {
+      params.departmentId = selectedDepartmentId.value;
+    }
+    
+    // ⚠️ 實際應用中，您可能需要修改 PatientsService.getAllPatients 來接受 params
+    const response = await PatientsService.getAllPatients(params); 
+    
     patients.value = response.map(patient => ({
       ...patient,
       id: Number(patient.id)
@@ -290,7 +302,15 @@ const fetchPatients = async () => {
   }
 };
 
-
+const fetchDepartments = async () => {
+  try {
+    const response = await DepartmentsService.getDepartmentList();
+    departments.value = response;
+  } catch (error) {
+    console.error('Failed to fetch departments:', error);
+    message.error('獲取科室列表失敗');
+  }
+};
 
 const fetchBeds = async () => {
   try {
@@ -305,7 +325,7 @@ const fetchBeds = async () => {
   }
 };
 
-const openPatientInNewTab = (patient: Inpatient) => {
+const openPatientInNewTab = (patient: BasePatient) => {
   router.push({
     name: 'PatientDetail',
     params: { id: patient.id }
@@ -414,6 +434,7 @@ const fetchDoctors = async () => {
 
 onMounted(() => {
   fetchPatients();
+  fetchDepartments();
   // fetchInpatientRecords();
   fetchBeds();
   fetchDoctors();

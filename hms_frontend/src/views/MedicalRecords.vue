@@ -1,25 +1,41 @@
 <template>
     <div class="medical-records-view">
-        <h1>病歷列表</h1>
+
+        <a-page-header title="病歷管理" :style="{ padding: '0 0 20px 0' }">
+            <template #extra>
+                <a-space>
+                    <a-button type="primary" @click="openCreateMedicalRecordPage">
+                        <template #icon>
+                            <PlusOutlined />
+                        </template>
+                        新增病歷
+                    </a-button>
+                    <a-button @click="fetchMedicalRecords">
+                        <template #icon>
+                            <SyncOutlined />
+                        </template>
+                        刷新
+                    </a-button>
+                </a-space>
+            </template>
+        </a-page-header>
         <a-card :bodyStyle="{ padding: 0 }">
-            <a-table
-                :columns="medicalRecordColumns"
-                :data-source="paginatedRecords"
-                :loading="loading"
-                :pagination="false"
-                row-key="id"
-                size="middle"
-            >
+            <a-table :columns="medicalRecordColumns" :data-source="paginatedRecords" :loading="loading"
+                :pagination="false" row-key="id" size="middle">
                 <template #title>
                     <div class="table-header">
                         <span class="section-title">病歷列表 ({{ filteredRecords?.length || 0 }})</span>
                         <div class="table-actions">
                             <a-button @click="exportRecords">
-                                <template #icon><DownloadOutlined /></template>
+                                <template #icon>
+                                    <DownloadOutlined />
+                                </template>
                                 匯出
                             </a-button>
                             <a-button @click="printRecords">
-                                <template #icon><PrinterOutlined /></template>
+                                <template #icon>
+                                    <PrinterOutlined />
+                                </template>
                                 列印
                             </a-button>
                         </div>
@@ -31,7 +47,9 @@
                         <template v-if="column.key === 'record_id'">
                             <div class="id-number">{{ record.id }}</div>
                             <a-tag v-if="record.priority === 'high'" color="red" class="priority-tag">
-                                <template #icon><ExclamationCircleOutlined /></template>
+                                <template #icon>
+                                    <ExclamationCircleOutlined />
+                                </template>
                                 緊急
                             </a-tag>
                         </template>
@@ -44,7 +62,7 @@
                         </template>
 
                         <template v-else-if="column.key === 'status'">
-                             <a-tag :color="getStatusColor(record.status)">
+                            <a-tag :color="getStatusColor(record.status)">
                                 {{ getStatusText(record.status) }}
                             </a-tag>
                         </template>
@@ -53,38 +71,20 @@
                         <template v-else-if="column.key === 'action'">
                             <a-space>
                                 <a-button size="small" @click="openMedicalRecordPage(record)">
-                                    <template #icon><EyeOutlined /></template>
+                                    <template #icon>
+                                        <EyeOutlined />
+                                    </template>
                                     查看
                                 </a-button>
-                                <!-- <a-button size="small" @click="editRecord(record)">
-                                    <template #icon><EditOutlined /></template>
-                                    編輯
-                                </a-button>
-                                <a-button size="small" type="primary" @click="addProgress(record)">
-                                    <template #icon><PlusOutlined /></template>
-                                    進度
-                                </a-button>
-                                <a-popconfirm title="確定完成該病歷嗎?" @confirm="completeRecord(record)">
-                                    <a-button size="small" type="ghost" class="btn-success">
-                                        <template #icon><CheckOutlined /></template>
-                                        完成
-                                    </a-button>
-                                </a-popconfirm> -->
                             </a-space>
                         </template>
                     </template>
                 </template>
             </a-table>
-            
-            <div class="pagination-footer">
-                 <a-pagination
-                    v-model:current="currentPage"
-                    :total="filteredRecords?.length || 0" 
-                    :page-size="pageSize"
-                    show-size-changer
-                    show-quick-jumper
 
-                />
+            <div class="pagination-footer">
+                <a-pagination v-model:current="currentPage" :total="filteredRecords?.length || 0" :page-size="pageSize"
+                    show-size-changer show-quick-jumper />
             </div>
         </a-card>
 
@@ -115,18 +115,18 @@ const departmentOptions = [
     { value: 'neurology', label: '神經科' }
 ]
 
-const medicalRecordColumns = [  
+const medicalRecordColumns = [
     {
         title: '病歷編號',
         dataIndex: 'id',
         // 🚨 修復: 將 key 更改為 'record_id' 以匹配模板
-        key: 'record_id', 
+        key: 'record_id',
     },
     {
         title: '病人資訊',
         dataIndex: 'patientName',
         // 🚨 新增 key: 'patient_info' 以匹配模板
-        key: 'patient_info', 
+        key: 'patient_info',
     },
     {
         title: '診斷',
@@ -150,7 +150,7 @@ const medicalRecordColumns = [
     },
     {
         title: '操作', // 模板中使用了 action key, 這裡需要一個 action 欄位
-        key: 'action', 
+        key: 'action',
     },
     // 移除 '最後更新' 和 '更新人' 欄位，因為模板中沒有對應的 bodyCell 處理
     // 如果需要顯示，請在模板中為其添加 #bodyCell 邏輯
@@ -287,6 +287,12 @@ const openMedicalRecordPage = (record: MedicalRecord) => {
     });
 }
 
+const openCreateMedicalRecordPage = () => {
+    router.push({
+        name: 'CreateMedicalRecord'
+    });
+}
+
 const editRecord = (record: MedicalRecord) => {
     alert(`編輯病歷: ${record.id}`)
 }
@@ -383,7 +389,7 @@ const fetchMedicalRecords = async () => {
     } catch (error) {
         console.error('獲取病歷失敗:', error)
         // 🚨 關鍵修復: 確保在 API 失敗時，medicalRecords 仍是空陣列，避免 length 錯誤
-        medicalRecords.value = [] 
+        medicalRecords.value = []
     }
 }
 

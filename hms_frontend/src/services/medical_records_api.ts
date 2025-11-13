@@ -23,6 +23,29 @@ export interface MedicalRecord {
     progressNotes: ProgressNote[]
 }
 
+export interface CreateMedicalRecordDto {
+    patientId: string
+    doctorId: string
+    diagnosis: string
+    symptoms?: string
+    allergies?: string
+    priority: 'normal' | 'high'
+    admissionDate: string
+    progressNotes: ProgressNote[]
+}
+
+export interface UpdateMedicalRecordDto {
+    id: string
+    patientId: string
+    doctorId: string
+    diagnosis: string
+    symptoms?: string
+    allergies?: string
+    priority: 'normal' | 'high'
+    admissionDate: string
+    progressNotes: ProgressNote[]
+}
+
 export interface ProgressNote {
     id: string
     record_date:Date

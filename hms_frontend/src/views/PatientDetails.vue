@@ -138,6 +138,27 @@
             </a-tabs>
         </a-card>
 
+        <a-card v-if="patient.id" title="預約紀錄" class="card">
+            <a-table :columns="appointmentRecordColumns" :data-source="appointmentRecords" :loading="loading" rowKey="id"
+                class="data-table">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'status'">
+                        <a-tag :color="getStatusColor(record.status)">
+                            {{ getStatusText(record.status) }}
+                        </a-tag>
+                    </template>
+
+                    <template v-else-if="column.key === 'department'">
+                        {{  record.department.displayName}}
+                    </template>
+
+                    <template v-else-if="column.key === 'doctor'">
+                        {{ record.doctor ? record.doctor.name + ' (' + record.doctor.title + ')' : '-' }}
+                    </template>
+                </template>
+            </a-table>
+        </a-card>
+
         <a-card v-if="patient.id" title="住院紀錄" class="card">
             <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading" rowKey="id"
                 class="data-table">
@@ -159,6 +180,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import type { AppointmentResponse } from '../services/appointment_api'
 // 導入需要的 Ant Design 組件
 import {
     Card as ACard,
@@ -174,7 +196,9 @@ import {
 // 導入編輯所需的圖標
 import { ArrowLeftOutlined, EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import PatientsService from '@/services/patients_api'
+import AppointmentsService from '@/services/appointment_api'
 import type { BasePatient } from '@/services/patients_api'
+import DepartmentsService from '@/services/departments_api'
 import '@/assets/main.css'
 
 // 為了在模板中正確使用，需要從 Descriptions 提取 Item
@@ -190,9 +214,12 @@ const patient = ref<BasePatient>({} as BasePatient)
 const editablePatient = ref<BasePatient>({} as BasePatient)
 const medicalRecords = ref([])
 const inpatientRecords = ref([])
+const appointmentRecords = ref<AppointmentResponse[]>([])
 const loading = ref(false)
 const saving = ref(false) // 儲存狀態
 const activeTab = ref('records')
+const departmentId = ref(0)
+
 
 // **新增：編輯狀態**
 const isEditing = ref(false)
@@ -207,6 +234,14 @@ const medicalRecordColumns = [
     { title: '狀態', dataIndex: 'status', key: 'status' }
 ]
 
+const appointmentRecordColumns = [
+    { title: '預約單號', dataIndex: 'id', key: 'id' },
+    { title: '預約日期', dataIndex: 'appointmentDate', key: 'appointmentDate' },
+    { title: '醫生', key: 'doctor' },
+    { title: '科室', dataIndex: 'department', key: 'department' },
+    { title: '狀態', dataIndex: 'status', key: 'status' }
+]
+
 const inpatientRecordColumns = [
     { title: '住院單號', dataIndex: 'id', key: 'id' },
     { title: '診斷', dataIndex: 'diagnosis', key: 'diagnosis' },
@@ -216,24 +251,26 @@ const inpatientRecordColumns = [
     { title: '狀態', dataIndex: 'status', key: 'status' }
 ]
 
+const departmentName = ref('')
+
 // 狀態文字和顏色函數... (保持不變)
 const getStatusColor = (status: string) => {
     switch (status) {
-        case 'inpatient': return 'green'
-        case 'discharged': return 'red'
-        case 'transferred': return 'blue'
+        case 'pending': return 'yellow'
+        case 'confirmed': return 'green'
+        case 'cancelled': return 'red'
+        case 'completed': return 'blue'
+        case 'no_show': return 'orange'
         default: return 'gray'
     }
 }
 const getStatusText = (status: string) => {
     switch (status) {
-        case 'inpatient': return '住院中'
-        case 'discharged': return '已出院'
-        case 'permitted-discharge': return '出院許可'
-        case 'waiting': return '等待入院'
-        case 'transferred': return '轉院'
-        case 'active': return '持續病症'
-        case 'inactive': return '已痊愈'
+        case 'pending': return 'Pending'
+        case 'confirmed': return '已確認'
+        case 'cancelled': return '已取消'
+        case 'completed': return '已完成'
+        case 'no_show': return '未到'
         default: return 'Unknown'
     }
 }
@@ -298,6 +335,33 @@ const fetchInpatientRecords = async () => {
     }
 }
 
+const fetchAppointmentRecords = async () => {
+    try {
+        const patientId = router.currentRoute.value.params.id as string
+        const response = await AppointmentsService.getPatientRecordList(Number(patientId))
+        appointmentRecords.value = response
+        console.log(appointmentRecords.value)
+    } catch (error) {
+        console.error('獲取病歷記錄失敗:', error)
+    }
+}
+
+interface Department {
+    id: number
+    departmentName: string
+}
+
+const departments = ref<Department[]>([])
+
+const fetchDepartments = async () => {
+    try {
+        const response = await DepartmentsService.getDepartmentList()
+        departments.value = response
+    } catch (error) {
+        console.error('獲取科室列表失敗:', error)
+    }
+}
+
 // 返回邏輯
 const goBack = () => {
     if (window.history.state.back) {
@@ -324,7 +388,9 @@ const fetchMedicalRecords = async () => {
 onMounted(() => {
     fetchPatientDetail()
     fetchMedicalRecords()
+    fetchDepartments()
     fetchInpatientRecords()
+    fetchAppointmentRecords()
 })
 </script>
 

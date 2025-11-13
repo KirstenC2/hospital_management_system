@@ -26,6 +26,7 @@
         navItems: [
           { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt', label: '首頁' },
           { name: 'Patients', path: '/patients', icon: 'fas fa-user-injured', label: '病人管理' },
+          { name: 'Appointments', path: '/appointments', label: '門診管理', icon: 'fas fa-user-injured' },
           { name: 'Doctors', path: '/doctors', icon: 'fas fa-user-md', label: '醫生管理' },
           { name: 'Beds', path: '/beds', icon: 'fas fa-user-md', label: '病床管理' },
           { name: 'MedicalRecords', path: '/medical-records', icon: 'fas fa-user-md', label: '病歷管理'},

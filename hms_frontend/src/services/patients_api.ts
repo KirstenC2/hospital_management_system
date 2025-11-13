@@ -7,14 +7,32 @@ export interface BasePatient {
     gender: string;
     age: number;
     phone: string;
+    birthDate?: string;
     status: string;
     address?: string;
     emergencyContact?: string;
     emergencyPhone?: string;
 }
 
-export interface Inpatient {
+export interface InpatientPatientRecords {
     id: number;
+    patientId: number;
+    doctorId: number;
+    bedId?: number;
+    admissionDate: string;
+    expectedDischargeDate: string;
+    diagnosis: string;
+    chiefComplaint?: string;
+    medicalHistory?: string;
+    treatmentPlan?: string;
+    admissionNotes?: string;
+    status?: 'waiting' | 'inpatient' | 'discharged' | 'transferred';
+    createdAt?: string;
+    updatedAt?: string;
+}
+;
+
+export interface OutPatientsEncounters {
     name: string;
     gender: string;
     age: number;
@@ -28,22 +46,8 @@ export interface Inpatient {
     updatedAt?: string;
 }
 
-type Patient = BasePatient | Inpatient;
 
-export interface OutPatients {
-    id: string;
-    name: string;
-    gender: string;
-    age: number;
-    patientType: string;
-    phone: string;
-    contactNumber: string;
-    status: string;
-    diagnosis: string;
-}
-
-
-export interface CreateInPatientDto {
+export interface CreatePatientDto {
     name: string;
     gender: string;
     age: number;
@@ -55,16 +59,6 @@ export interface CreateInPatientDto {
     status?: string;
     createdAt?: string;
     updatedAt?: string;
-}
-
-export interface CreateOutPatientDto {
-    name: string;
-    gender: string;
-    age: number;
-    phone: string;
-    contactNumber: string;
-    status: string;
-    diagnosis: string;
 }
 
 export interface CreateInpatientRecordDto {
@@ -83,11 +77,11 @@ export interface CreateInpatientRecordDto {
 
 class PatientsService {
     // 获取所有患者
-    async getAllPatients(): Promise<Inpatient[]> {
-        return await api.get('/patients/list');
+    async getAllPatients(params?: { departmentId?: number }): Promise<BasePatient[]> {
+        return await api.get('/patients/list', { params });
     }
 
-    async createPatient(createPatientDto: CreateInPatientDto): Promise<Patient> {
+    async createPatient(createPatientDto: CreatePatientDto): Promise<BasePatient> {
         return await api.post('/patients/new', createPatientDto);
     }
 
@@ -107,11 +101,11 @@ class PatientsService {
         return await api.post('/inpatients/new', createInpatientRecordDto);
     }
 
-    async updatePatient(patient: Patient): Promise<Patient> {
+    async updatePatient(patient: BasePatient): Promise<BasePatient> {
         return await api.put(`/patients/update?id=${patient.id}`, patient);
     }
 
-    async getPatientsByDoctorId(id: number): Promise<Inpatient[]> {
+    async getPatientsByDoctorId(id: number): Promise<BasePatient[]> {
         return await api.get(`/inpatients/doctor?doctor_id=${id}`);
     }
 }

@@ -89,18 +89,20 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons-vue'
 import DoctorsService from '@/services/doctors_api'
 import type { Doctor } from '@/services/doctors_api'
-import type { Inpatient } from '@/services/patients_api'
+import type { BasePatient } from '@/services/patients_api'
 import PatientsService from '@/services/patients_api'
+import DepartmentsService from '@/services/departments_api'
 
 const router = useRouter()
 const route = useRoute()
 const doctor = ref<Doctor | null>(null)
-const patients = ref<Inpatient[] | null>(null)
+const patients = ref<BasePatient[] | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const isEditing = ref(false)
 const saving = ref(false)
 const editableDoctor = ref<Doctor | null>(null)
+const departmentName = ref<string | null>(null)
 const inpatientRecordColumns = [
     {
         title: '病患姓名',
@@ -149,6 +151,15 @@ const saveChanges = async () => {
     }
 }
 
+const fetchDepartmentName = async () => {
+    try {
+        const response = await DepartmentsService.getDepartmentById(String(doctor.value!.departmentId))
+        departmentName.value = response.name
+    } catch (e) {
+        console.error('Failed to fetch department name:', e)
+    }
+}
+
 onMounted(async () => {
     try {
         const id = route.params.id as string
@@ -157,6 +168,7 @@ onMounted(async () => {
         const response2 = await PatientsService.getPatientsByDoctorId(+id)
         patients.value = response2
         console.log(patients.value)
+        fetchDepartmentName()
     } catch (e) {
         console.error('Failed to fetch doctor:', e)
         error.value = '載入醫生資料失敗'

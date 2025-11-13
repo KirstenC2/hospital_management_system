@@ -15,12 +15,12 @@
     <a-row :gutter="16">
       <a-col :span="12">
         <a-card title="醫生總數">
-          <p class="text-2xl font-bold text-gray-800">{{ doctors.length }}</p>
+          <p class="text-2xl font-bold">{{ doctors.length }}</p>
         </a-card>
       </a-col>
       <a-col :span="12">
         <a-card title="科室總數">
-          <p class="text-2xl font-bold text-gray-800">{{ departments.length }}</p>
+          <p class="text-2xl font-bold">{{ departments.length }}</p>
         </a-card>
       </a-col>
     </a-row>
@@ -318,6 +318,18 @@ onMounted(async () => {
   font-size: 16px;
   font-weight: bold;
   flex-shrink: 0;
+}
+
+.stat-card {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.total-card {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
 }
 
 
