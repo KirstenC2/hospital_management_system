@@ -1,6 +1,7 @@
 // entities/department.entity.ts
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { Bed } from 'src/facilities/beds/entities/beds.entity';
+import { Appointment } from 'src/appointment/entities/appointment.entity';
 
 @Table({ tableName: 'departments', timestamps: true })
 export class Department extends Model<Department> {
@@ -32,4 +33,7 @@ export class Department extends Model<Department> {
 
   @HasMany(() => Bed)
   beds: Bed[];
+
+  @HasMany(() => Appointment)
+  appointments: Appointment[];
 }

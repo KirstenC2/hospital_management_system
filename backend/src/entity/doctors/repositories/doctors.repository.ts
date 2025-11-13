@@ -39,6 +39,10 @@ export class DoctorsRepository {
     }
 
     async getDoctorById(id: number): Promise<any> {
-        return this.doctorsModel.findByPk(id);
+        return this.doctorsModel.findByPk(id,
+            {
+                include:[Department]
+            }
+        );
     }
 }
