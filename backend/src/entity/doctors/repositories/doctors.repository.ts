@@ -4,6 +4,7 @@ import { Doctors } from '../entities/doctors.entity';
 import { Department } from 'src/entity/departments/entities/departments.entity';
 import { QueryTypes } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class DoctorsRepository {
@@ -30,6 +31,17 @@ export class DoctorsRepository {
     async headcount(): Promise<any> {
         let sql = `SELECT COUNT(*), doctors."departmentId"  FROM doctors group by doctors."departmentId" ;`;
         return this.sequelize.query(sql, { type: QueryTypes.SELECT });
+    }
+
+    async getDoctorsByDepartmentIds(departmentIds: number[]): Promise<any> {
+        return this.doctorsModel.findAll({
+            where: {
+                departmentId: {
+                    [Op.in]: departmentIds
+                }
+            },
+            include: [Department]
+        });
     }
     
     async update(id: number, doctor: any): Promise<any> {

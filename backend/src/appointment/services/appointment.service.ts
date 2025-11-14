@@ -16,8 +16,9 @@ export class AppointmentService {
         return await this.appointmentRepository.getPatientRecordList(patientId);
     }
 
-    async cancel(id: string): Promise<string> {
-        return await this.appointmentRepository.cancel(id);
+    async update(id: string, status: string): Promise<string> {
+        console.log("-------------", status);
+        return await this.appointmentRepository.update(id, status);
     }
 
     async findById(id: number): Promise<Appointment | null> {

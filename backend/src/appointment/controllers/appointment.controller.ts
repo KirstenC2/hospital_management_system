@@ -26,8 +26,8 @@ export class AppointmentController {
     return await this.appointmentService.create(appointment);
   }
 
-  @Put(':id/cancel')
-  async cancel(@Param('id') id: string): Promise<string> {
-    return await this.appointmentService.cancel(id);
+  @Put('update/:id/:status')
+  async update(@Param('id') id: string, @Param('status') status: string): Promise<string> {
+    return await this.appointmentService.update(id, status);
   }
 }

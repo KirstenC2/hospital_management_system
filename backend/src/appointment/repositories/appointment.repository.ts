@@ -36,15 +36,47 @@ export class AppointmentRepository{
         return await this.appointmentModel.create(appointment);
     }
 
-    async cancel(id: string): Promise<string> {
-        let result = await this.appointmentModel.update({ 
-            status: AppointmentStatus.CANCELLED,
-            cancelledAt: new Date(),
-            updatedAt: new Date()
-         }, { where: { id } });
-        if(result[0] === 0){
-            throw new Error('Appointment not found');
+    async update(id: string, status: string): Promise<string> {
+        if (status === 'cancelled') {
+            let result = await this.appointmentModel.update({ 
+                status: AppointmentStatus.CANCELLED,
+                cancelledAt: new Date(),
+                updatedAt: new Date()
+             }, { where: { id } });
+            if(result[0] === 0){
+                throw new Error('Appointment not found');
+            }
+            return 'Appointment cancelled successfully';
+        }else if (status === 'confirmed') {
+            let result = await this.appointmentModel.update({ 
+                status: AppointmentStatus.CONFIRMED,
+                confirmedAt: new Date(),
+                updatedAt: new Date()
+             }, { where: { id } });
+            if(result[0] === 0){
+                throw new Error('Appointment not found');
+            }
+            return 'Appointment confirmed successfully';
+        }else if (status === 'completed') {
+            let result = await this.appointmentModel.update({ 
+                status: AppointmentStatus.COMPLETED,
+                completedAt: new Date(),
+                updatedAt: new Date()
+             }, { where: { id } });
+            if(result[0] === 0){
+                throw new Error('Appointment not found');
+            }
+            return 'Appointment completed successfully';
+        }else if (status === 'no_show') {
+            let result = await this.appointmentModel.update({ 
+                status: AppointmentStatus.NO_SHOW,
+                updatedAt: new Date()
+             }, { where: { id } });
+            if(result[0] === 0){
+                throw new Error('Appointment not found');
+            }
+            return 'Appointment no show successfully';
         }
-        return 'Appointment cancelled successfully';
+        return 'Appointment status updated successfully';
     }
 }

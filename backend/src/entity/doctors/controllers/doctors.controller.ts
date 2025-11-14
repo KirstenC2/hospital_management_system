@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Query } from '@nestjs/common';
 import { DoctorsService } from '../services/doctors.service';
 import { Doctors } from '../entities/doctors.entity';
 import { CreateDoctorDto } from '../dto/create-doctor.dto';
@@ -21,6 +21,11 @@ export class DoctorsController {
   @Get('department/headcount')
   async headcount(): Promise<any> {
     return this.doctorsService.headcount();
+  }
+
+  @Get('department')
+  async getDoctorsByDepartmentIds(@Query('departmentIds') departmentIds: string): Promise<Doctors[]> {
+    return this.doctorsService.getDoctorsByDepartmentIds(departmentIds.split(',').map(Number));
   }
 
   @Post('new')

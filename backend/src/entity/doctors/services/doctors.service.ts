@@ -17,6 +17,10 @@ export class DoctorsService {
         return this.doctorsRepository.headcount();
     }
 
+    async getDoctorsByDepartmentIds(departmentIds: number[]): Promise<any> {
+        return this.doctorsRepository.getDoctorsByDepartmentIds(departmentIds);
+    }
+
     async create(doctor: any): Promise<any> {
         return this.doctorsRepository.create(doctor);
     }
