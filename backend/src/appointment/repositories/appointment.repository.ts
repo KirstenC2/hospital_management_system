@@ -5,6 +5,7 @@ import { Patient } from 'src/entity/patients/entities/patients.entity';
 import { Doctors } from 'src/entity/doctors/entities/doctors.entity';
 import { AppointmentStatus } from '../enum/appointment-status.enum';
 import { Department } from 'src/entity/departments/entities/departments.entity';
+import { Op } from 'sequelize';
 @Injectable()
 export class AppointmentRepository{
 
@@ -23,6 +24,17 @@ export class AppointmentRepository{
         return await this.appointmentModel.findAll({
             where: { patientId },
             include: [Patient, Doctors, Department]
+        });
+    }
+
+    async getTodayAppointmentsCount(): Promise<number> {
+        return await this.appointmentModel.count({
+            where: {
+                appointmentDate: {
+                    [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)),
+                    [Op.lt]: new Date(new Date().setHours(23, 59, 59, 999))
+                }
+            }
         });
     }
 

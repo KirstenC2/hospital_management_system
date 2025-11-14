@@ -16,6 +16,10 @@ export class AppointmentService {
         return await this.appointmentRepository.getPatientRecordList(patientId);
     }
 
+    async getTodayAppointmentsCount(): Promise<number> {
+        return await this.appointmentRepository.getTodayAppointmentsCount();
+    }
+
     async update(id: string, status: string): Promise<string> {
         console.log("-------------", status);
         return await this.appointmentRepository.update(id, status);

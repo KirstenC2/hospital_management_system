@@ -16,6 +16,11 @@ export class AppointmentController {
     return await this.appointmentService.getPatientRecordList(patientId);
   }
 
+  @Get('today-count')
+  async getTodayAppointmentsCount(): Promise<number> {
+    return await this.appointmentService.getTodayAppointmentsCount();
+  }
+
   @Get(':id')
   async findById(@Param('id') id: number): Promise<Appointment | null> {
     return await this.appointmentService.findById(id);

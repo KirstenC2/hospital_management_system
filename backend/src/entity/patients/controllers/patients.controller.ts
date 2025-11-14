@@ -23,6 +23,11 @@ export class PatientsController {
     return await this.patientsService.createPatient(createPatientDto);
   }
 
+  @Get('total-count')
+  async getTotalPatientsCount(): Promise<number> {
+    return await this.patientsService.getTotalPatientsCount();
+  }
+
   @Put('update')
   async updatePatient(@Body() updatePatientDto: UpdatePatientDto) {
     return await this.patientsService.updatePatient(updatePatientDto);

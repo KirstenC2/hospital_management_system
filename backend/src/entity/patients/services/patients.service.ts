@@ -21,6 +21,10 @@ export class PatientsService {
         return this.patientsRepository.createPatient(createPatientDto);
     }
 
+    async getTotalPatientsCount(): Promise<number> {
+        return this.patientsRepository.getTotalPatientsCount();
+    }
+
     async updatePatient(updatePatientDto: UpdatePatientDto): Promise<any> {
         return this.patientsRepository.updatePatient(updatePatientDto);
     }
