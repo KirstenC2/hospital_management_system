@@ -82,6 +82,10 @@ class AppointmentService {
     async getPatientRecordList(patientId: number): Promise<AppointmentResponse[]> {
         return await api.get(`/appointments/patient?patientId=${patientId}`);
     }
+
+    async getTodayAppointmentsCount(): Promise<number> {
+        return await api.get('/appointments/today-count');
+    }
 }
 
 export default new AppointmentService();

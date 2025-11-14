@@ -18,6 +18,13 @@
         </a-space>
       </template>
     </a-page-header>
+    <a-row>
+      <a-col :span="6">
+        <a-card title=" 病人總數">
+          {{ totalPatientsCount }}
+        </a-card>
+      </a-col>
+    </a-row>
 
     <a-card :bordered="false">
       <h3>病人列表</h3>
@@ -135,7 +142,7 @@
       </a-form>
     </a-modal>
   </div>
-  
+
 </template>
 
 <script setup lang="ts">
@@ -168,6 +175,8 @@ import BedsService from '@/services/beds_api';
 import type { Beds } from '@/services/beds_api';
 import DepartmentsService from '@/services/departments_api';
 import type { DepartmentList } from '@/services/departments_api';
+import { getStatusColor } from '@/utils/helper.utils';
+import AppointmentService from '@/services/appointment_api';
 
 const AFormItem = AForm.Item;
 const ASelectOption = ASelect.Option;
@@ -180,6 +189,7 @@ const showAddPatientModal = ref(false);
 const patients = ref<BasePatient[]>([]);
 const doctors = ref<Doctor[]>([]);
 const beds = ref<Beds[]>([]);
+const totalPatientsCount = ref(0);
 const departments = ref<DepartmentList[]>([]);
 // 新增狀態
 const showAdmissionModal = ref(false); // 控制住院 Modal 顯示
@@ -312,6 +322,16 @@ const fetchDepartments = async () => {
   }
 };
 
+const fetchTotalPatientsCount = async () => {
+  try {
+    const response = await PatientsService.getTotalPatientsCount();
+    totalPatientsCount.value = response;
+  } catch (error) {
+    console.error('Failed to fetch total patients count:', error);
+    message.error('獲取病人總數失敗');
+  }
+};
+
 const fetchBeds = async () => {
   try {
     loading.value = true;
@@ -330,15 +350,6 @@ const openPatientInNewTab = (patient: BasePatient) => {
     name: 'PatientDetail',
     params: { id: patient.id }
   });
-};
-
-const getStatusColor = (status: string) => {
-  const statusMap: Record<string, string> = {
-    'inpatient': 'blue',
-    'discharged': 'green',
-    'waiting': 'orange'
-  };
-  return statusMap[status] || 'default';
 };
 
 // Update the handleAddPatient function
@@ -435,6 +446,7 @@ const fetchDoctors = async () => {
 onMounted(() => {
   fetchPatients();
   fetchDepartments();
+  fetchTotalPatientsCount();
   // fetchInpatientRecords();
   fetchBeds();
   fetchDoctors();

@@ -108,6 +108,10 @@ class PatientsService {
     async getPatientsByDoctorId(id: number): Promise<BasePatient[]> {
         return await api.get(`/inpatients/doctor?doctor_id=${id}`);
     }
+
+    async getTotalPatientsCount(): Promise<number> {
+        return await api.get('/patients/total-count');
+    }
 }
 
 

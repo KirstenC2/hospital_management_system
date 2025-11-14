@@ -19,6 +19,13 @@
                 </a-space>
             </div>
         </div>
+        <a-row>
+            <a-col :span="6" >
+                <a-card title="今日預約總數">
+                    {{ todayAppointmentsCount }}
+                </a-card>
+            </a-col>
+        </a-row>
         <a-card :bodyStyle="{ padding: 0 }">
             <a-table :columns="columns" :data-source="appointments">
                 <template #bodyCell="{ column, record }">
@@ -96,6 +103,7 @@ const appointments = ref<AppointmentResponse[]>([]);
 const patients = ref<BasePatient[]>([]);
 const doctors = ref<Doctor[]>([]);
 const departments = ref<DepartmentList[]>([]);
+const todayAppointmentsCount = ref(0);
 const newAppointment = ref<CreateAppointmentDto>({
     patientId: '',
     doctorId: '',
@@ -171,6 +179,16 @@ const fetchPatients = async () => {
     }
 };
 
+const fetchTodayAppointmentsCount = async () => {
+    try {
+        const response = await appointmentsService.getTodayAppointmentsCount();
+        todayAppointmentsCount.value = response;
+    } catch (error) {
+        console.error('Failed to fetch today appointments count:', error);
+        message.error('獲取今日預約總數失敗');
+    }
+};
+
 const fetchDoctors = async (departmentIds: number[]) => {
     try {
         const response = await doctorsService.getDoctorsByDepartmentIds(departmentIds);
@@ -203,6 +221,7 @@ onMounted(() => {
     fetchappointments();
     fetchDepartments();
     fetchPatients();
+    fetchTodayAppointmentsCount();
     // fetchDoctors();
 });
 
