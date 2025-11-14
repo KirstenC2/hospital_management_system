@@ -3,9 +3,9 @@ import type { BasePatient } from "./patients_api";
 import type { Doctor } from "./doctors_api";
 
 export interface BaseAppointment {
-    patientId: number;
-    doctorId: number;
-    appointmentDate: string;
+    patientId: string;  // Changed to string for UUID
+    doctorId: string;   // Changed to string for UUID
+    appointmentDate: string; // Or Date if you want to handle date objects
     status: string;
     departmentId: number;
     notes?: string;
@@ -42,7 +42,13 @@ export interface Appointment extends BaseAppointment {
     updatedAt: string;
 }
 
-export type CreateAppointmentDto = Omit<Appointment, 'id'>;
+export interface CreateAppointmentDto {
+    patientId: string;
+    doctorId: string;
+    appointmentDate: string; // Or Date
+    departmentId: number;
+    notes?: string;
+}
 
 class AppointmentService {
     async getAllAppointments(): Promise<AppointmentResponse[]> {
@@ -58,7 +64,19 @@ class AppointmentService {
     }
 
     async cancelAppointment(id: string): Promise<Appointment> {
-        return await api.put(`/appointments/${id}/cancel`);
+        return await api.put(`/appointments/update/${id}/${'cancelled'}`);
+    }
+    
+    async confirmAppointment(id: string): Promise<Appointment> {
+        return await api.put(`/appointments/update/${id}/${'confirmed'}`);
+    }
+    
+    async completeAppointment(id: string): Promise<Appointment> {
+        return await api.put(`/appointments/update/${id}/${'completed'}`);
+    }
+    
+    async noShowAppointment(id: string): Promise<Appointment> {
+        return await api.put(`/appointments/update/${id}/${'no_show'}`);
     }
     
     async getPatientRecordList(patientId: number): Promise<AppointmentResponse[]> {

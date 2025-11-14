@@ -35,20 +35,68 @@
                 </template>
             </a-table>
         </a-card>
+        <a-modal v-model:visible="showAddOutpatientModal" title="新增門診預約" @ok="handleAddOutpatient">
+            <a-form :model="newAppointment" layout="vertical">
+                <a-form-item label="病人" name="patientId" :rules="[{ required: true, message: '請選擇病人' }]">
+                    <a-select v-model:value="newAppointment.patientId" placeholder="請選擇病人">
+                        <a-select-option v-for="patient in patients" :key="patient.id" :value="patient.id">
+                            {{ patient.name }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="科室" name="departmentId" :rules="[{ required: true, message: '請選擇科室' }]">
+                    <a-select v-model:value="newAppointment.departmentId" placeholder="請選擇科室">
+                        <a-select-option v-for="department in departments" :key="department.id" :value="department.id">
+                            {{ department.displayName }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="醫生" name="doctorId" :rules="[{ required: true, message: '請選擇醫生' }]">
+                    <a-select v-model:value="newAppointment.doctorId" placeholder="請先選擇科室"
+                        :disabled="!newAppointment.departmentId">
+                        <a-select-option v-for="doctor in doctors" :key="doctor.id" :value="doctor.id">
+                            {{ doctor.name }}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="預約日期" name="appointmentDate" :rules="[{ required: true, message: '請選擇預約日期' }]">
+                    <a-date-picker v-model:value="newAppointment.appointmentDate" />
+                </a-form-item>
+                <a-form-item label="備註" name="notes">
+                    <a-textarea v-model:value="newAppointment.notes" :rows="4" />
+                </a-form-item>
+            </a-form>
+        </a-modal>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
 import appointmentsService from '@/services/appointment_api';
-import type { AppointmentResponse } from '@/services/appointment_api';
+import type { AppointmentResponse, BaseAppointment, CreateAppointmentDto } from '@/services/appointment_api';
 import { message } from 'ant-design-vue';
 import router from '@/router';
 import { EyeOutlined } from '@ant-design/icons-vue';
+import patientsService from '@/services/patients_api';
+import doctorsService from '@/services/doctors_api';
+import type { BasePatient } from '@/services/patients_api';
+import type { Doctor } from '@/services/doctors_api';
+import type { DepartmentList } from '@/services/departments_api';
+import departmentsService from '@/services/departments_api';
 
 const showAddOutpatientModal = ref(false);
 const appointments = ref<AppointmentResponse[]>([]);
+const patients = ref<BasePatient[]>([]);
+const doctors = ref<Doctor[]>([]);
+const departments = ref<DepartmentList[]>([]);
+const newAppointment = ref<CreateAppointmentDto>({
+    patientId: '',
+    doctorId: '',
+    appointmentDate: '',
+    departmentId: 0,
+    notes: ''
+});
 const columns = [
     {
         title: 'ID',
@@ -85,6 +133,48 @@ const viewAppointment = (appointment: AppointmentResponse) => {
     router.push({ name: 'AppointmentDetails', params: { id: appointment.id } });
 };
 
+const handleAddOutpatient = async () => {
+    try {
+        const response = await appointmentsService.createAppointment(newAppointment.value);
+        appointments.value.push(response);
+        showAddOutpatientModal.value = false;
+        message.success('新增門診預約成功');
+    } catch (error) {
+        console.error('Failed to create appointment:', error);
+        message.error('新增門診預約失敗');
+    }
+};
+const fetchDepartments = async () => {
+    try {
+        const response = await departmentsService.getDepartmentList();
+        departments.value = response;
+    } catch (error) {
+        console.error('Failed to fetch departments:', error);
+        message.error('獲取科室列表失敗');
+    }
+};
+
+const fetchPatients = async () => {
+    try {
+        const response = await patientsService.getAllPatients();
+        patients.value = response;
+    } catch (error) {
+        console.error('Failed to fetch patients:', error);
+        message.error('獲取病人列表失敗');
+    }
+};
+
+const fetchDoctors = async (departmentIds: number[]) => {
+    try {
+        const response = await doctorsService.getDoctorsByDepartmentIds(departmentIds);
+        doctors.value = response;
+    } catch (error) {
+        console.error('Failed to fetch doctors:', error);
+        message.error('獲取醫生列表失敗');
+    }
+};
+
+
 const fetchappointments = async () => {
     try {
         const response = await appointmentsService.getAllAppointments();
@@ -104,6 +194,22 @@ const fetchappointments = async () => {
 };
 onMounted(() => {
     fetchappointments();
+    fetchDepartments();
+    fetchPatients();
+    // fetchDoctors();
+});
+
+// Add this watch after your existing code
+watch(() => newAppointment.value.departmentId, (newDepartmentId) => {
+    if (newDepartmentId) {
+        // Clear the selected doctor when department changes
+        newAppointment.value.doctorId = '';
+        // Fetch doctors for the selected department
+        fetchDoctors([newDepartmentId]);
+    } else {
+        // If no department is selected, clear the doctors list
+        doctors.value = [];
+    }
 });
 </script>
 

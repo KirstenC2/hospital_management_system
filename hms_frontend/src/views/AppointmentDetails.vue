@@ -19,21 +19,64 @@
 
     <a-card :bodyStyle="{ padding: 0 }" :bordered="false" class="appointment-details-card">
       <a-descriptions :column="2">
-        <a-descriptions-item label="預約單號">{{ appointment?.id }}</a-descriptions-item>
+        <a-descriptions-item label="预约单号">{{ appointment?.id }}</a-descriptions-item>
         <a-descriptions-item label="姓名">{{ appointment?.patient?.name }}</a-descriptions-item>
-        <a-descriptions-item label="預約日期">{{ appointment?.appointmentDate }}</a-descriptions-item>
-        <a-descriptions-item label="狀態">{{ appointment?.status }}</a-descriptions-item>
+        <a-descriptions-item label="预约日期">{{ appointment?.appointmentDate }}</a-descriptions-item>
+        <a-descriptions-item label="状态">
+          <a-tag :color="getStatusColor(appointment?.status || '')">
+            {{ getStatus(appointment?.status || '') }}
+          </a-tag>
+        </a-descriptions-item>
         <a-descriptions-item label="科室">
           {{ departmentName }}
-        </a-descriptions-item><a-descriptions-item label="備註">{{ appointment?.notes }}</a-descriptions-item>
-        <a-descriptions-item v-if="appointment?.cancelledAt" label="取消時間">{{ appointment?.cancelledAt }}</a-descriptions-item>
+        </a-descriptions-item><a-descriptions-item label="备注">{{ appointment?.notes }}</a-descriptions-item>
+        <a-descriptions-item v-if="appointment?.cancelledAt" label="取消时间">{{ appointment?.cancelledAt
+          }}</a-descriptions-item>
       </a-descriptions>
       <a-space>
-        <a-button type="primary" @click="cancelAppointment">
+        <!-- Cancel button - show for PENDING, NO_SHOW, CONFIRMED -->
+        <a-button 
+          v-if="['pending', 'confirmed'].includes(appointment?.status || '')" 
+          type="primary"
+          danger
+          @click="cancelAppointment">
           <template #icon>
-            <EyeOutlined />
+            <CloseOutlined />
           </template>
           取消預約
+        </a-button>
+
+        <!-- Confirm button - only for PENDING -->
+        <a-button 
+          v-if="appointment?.status === 'pending'" 
+          type="primary"
+          @click="confirmAppointment">
+          <template #icon>
+            <CheckOutlined />
+          </template>
+          確認預約
+        </a-button>
+
+        <!-- Complete button - only for CONFIRMED -->
+        <a-button 
+          v-if="appointment?.status === 'confirmed'" 
+          type="primary"
+          @click="completeAppointment">
+          <template #icon>
+            <CheckCircleOutlined />
+          </template>
+          完成預約
+        </a-button>
+
+        <!-- No Show button - only for PENDING or CONFIRMED -->
+        <a-button 
+          v-if="['pending', 'confirmed'].includes(appointment?.status || '')" 
+          type="primary"
+          @click="noShowAppointment">
+          <template #icon>
+            <ClockCircleOutlined />
+          </template>
+          標記為失約
         </a-button>
       </a-space>
     </a-card>
@@ -65,34 +108,65 @@ const cancelAppointment = async () => {
   }
 };
 
-const columns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    width: 80,
-  },
-  {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '預約日期',
-    dataIndex: 'appointmentDate',
-    key: 'appointmentDate',
-  },
-  {
-    title: '狀態',
-    dataIndex: 'status',
-    key: 'status',
-  },
-  {
-    title: '操作',
-    key: 'action',
-    width: 100,
-  },
-];
+const confirmAppointment = async () => {
+  try {
+    const response = await appointmentsService.confirmAppointment(String(router.currentRoute.value.params.id));
+    appointment.value = response;
+    console.log(appointment.value);
+    fetchAppointment();
+  } catch (error) {
+    console.error('Failed to confirm appointment:', error);
+  }
+};
+
+const completeAppointment = async () => {
+  try {
+    const response = await appointmentsService.completeAppointment(String(router.currentRoute.value.params.id));
+    appointment.value = response;
+    fetchAppointment();
+  } catch (error) {
+    console.error('Failed to complete appointment:', error);
+  }
+};
+
+const noShowAppointment = async () => {
+  try {
+    const response = await appointmentsService.noShowAppointment(String(router.currentRoute.value.params.id));
+    appointment.value = response;
+    fetchAppointment();
+  } catch (error) {
+    console.error('Failed to no show appointment:', error);
+  }
+};
+
+const getStatus = (status: string | undefined) => {
+  status = status?.toLowerCase();
+  if (status === 'pending') {
+    return '待确认';
+  } else if (status === 'confirmed') {
+    return '确认';
+  } else if (status === 'cancelled') {
+    return '取消';
+  } else if (status === 'completed') {
+    return '完成';
+  } else if (status === 'no_show') {
+    return '失约';
+  }
+};
+
+const getStatusColor = (status: string) => {
+  if (status === 'pending') {
+    return 'blue';
+  } else if (status === 'confirmed') {
+    return 'green';
+  } else if (status === 'cancelled') {
+    return 'red';
+  } else if (status === 'completed') {
+    return 'yellow';      
+  } else if (status === 'no_show') {
+    return '#FF0000';
+  }
+};
 
 const appointment = ref<AppointmentResponse>();
 
@@ -100,7 +174,7 @@ const fetchAppointment = async () => {
   try {
     const response = await appointmentsService.getAppointmentById(String(router.currentRoute.value.params.id));
     appointment.value = response;
-
+    console.log(appointment.value);
   } catch (error) {
     console.error('Failed to fetch appointment:', error);
   }

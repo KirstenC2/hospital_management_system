@@ -43,6 +43,11 @@ class DoctorsService {
         return await api.post('/doctors/new', data);
     }
 
+    async getDoctorsByDepartmentIds(departmentIds: number[]): Promise<Doctor[]> {
+        console.log(departmentIds);
+        return await api.get(`/doctors/department?departmentIds=${departmentIds.join(',')}`);
+    }
+
     async getDepartmentList(): Promise<any[]> {
         return await api.get('/departments/list');
     }     
