@@ -24,13 +24,18 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
                         <a-space>
-                            <a-button size="small" @click="viewAppointment(record)">
+                            <a-button size="medium" @click="viewAppointment(record)" class="action-button">
                                 <template #icon>
                                     <EyeOutlined />
                                 </template>
                                 詳情
                             </a-button>
                         </a-space>
+                    </template>
+                    <template v-if="column.key === 'status'">
+                        <a-tag :size="'medium'" :color="getStatusColor(record.status)">
+                            {{ getStatus(record.status) }}
+                        </a-tag>
                     </template>
                 </template>
             </a-table>
@@ -84,6 +89,7 @@ import type { BasePatient } from '@/services/patients_api';
 import type { Doctor } from '@/services/doctors_api';
 import type { DepartmentList } from '@/services/departments_api';
 import departmentsService from '@/services/departments_api';
+import { getStatus, getStatusColor } from '@/utils/helper.utils';
 
 const showAddOutpatientModal = ref(false);
 const appointments = ref<AppointmentResponse[]>([]);
@@ -118,6 +124,7 @@ const columns = [
         title: '狀態',
         dataIndex: 'status',
         key: 'status',
+        
     },
     {
         title: '操作',
@@ -216,5 +223,12 @@ watch(() => newAppointment.value.departmentId, (newDepartmentId) => {
 <style scoped>
 .outpatients-encounters-view {
     padding: 20px;
+}
+
+.action-button {
+    margin-right: 8px;
+    color: #1890ff;
+    font-weight: bold;
+    border-radius: 8px;
 }
 </style>

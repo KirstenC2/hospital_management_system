@@ -63,7 +63,7 @@
 
                         <template v-else-if="column.key === 'status'">
                             <a-tag :color="getStatusColor(record.status)">
-                                {{ getStatusText(record.status) }}
+                                {{ getStatus(record.status) }}
                             </a-tag>
                         </template>
 
@@ -100,6 +100,7 @@ import {
     EyeOutlined, EditOutlined, CheckOutlined,
 } from '@ant-design/icons-vue'
 import router from '@/router'
+import { getStatus, getStatusColor } from '@/utils/helper.utils'
 // 移除未使用的 Ant Design 導入，保持簡潔
 // import { Table, Tag, Button, InputSearch, Select, Row, Col, Card, PageHeader, Statistic, RadioGroup, Pagination, Space, Popconfirm } from 'ant-design-vue';
 
@@ -248,23 +249,6 @@ const paginatedRecords = computed(() => {
     return recordsToPaginate.slice(start, end)
 })
 
-const getStatusText = (status: string) => {
-    const statusMap: { [key: string]: string } = {
-        'active': '治療中',
-        'completed': '已完成',
-        'archived': '已歸檔'
-    }
-    return statusMap[status] || status
-}
-
-const getStatusColor = (status: string) => {
-    const colorMap: { [key: string]: string } = {
-        'active': 'blue',
-        'completed': 'green',
-        'archived': 'red'
-    }
-    return colorMap[status] || 'default'
-}
 
 const handleSearch = () => {
     currentPage.value = 1

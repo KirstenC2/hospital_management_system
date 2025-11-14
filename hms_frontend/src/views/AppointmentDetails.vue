@@ -91,7 +91,7 @@ import appointmentsService from '@/services/appointment_api';
 import { onMounted } from 'vue';
 import type { AppointmentResponse } from '@/services/appointment_api';
 import DepartmentService from '@/services/departments_api';
-
+import { getStatus, getStatusColor } from '@/utils/helper.utils';
 const router = useRouter();
 const departmentName = ref<string>('-');
 const goBack = () => {
@@ -139,34 +139,7 @@ const noShowAppointment = async () => {
   }
 };
 
-const getStatus = (status: string | undefined) => {
-  status = status?.toLowerCase();
-  if (status === 'pending') {
-    return '待确认';
-  } else if (status === 'confirmed') {
-    return '确认';
-  } else if (status === 'cancelled') {
-    return '取消';
-  } else if (status === 'completed') {
-    return '完成';
-  } else if (status === 'no_show') {
-    return '失约';
-  }
-};
 
-const getStatusColor = (status: string) => {
-  if (status === 'pending') {
-    return 'blue';
-  } else if (status === 'confirmed') {
-    return 'green';
-  } else if (status === 'cancelled') {
-    return 'red';
-  } else if (status === 'completed') {
-    return 'yellow';      
-  } else if (status === 'no_show') {
-    return '#FF0000';
-  }
-};
 
 const appointment = ref<AppointmentResponse>();
 

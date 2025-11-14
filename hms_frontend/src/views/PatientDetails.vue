@@ -119,7 +119,7 @@
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'status'">
                                 <a-tag :color="getStatusColor(record.status)">
-                                    {{ getStatusText(record.status) }}
+                                    {{ getStatus(record.status) }}
                                 </a-tag>
                             </template>
 
@@ -144,7 +144,7 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'status'">
                         <a-tag :color="getStatusColor(record.status)">
-                            {{ getStatusText(record.status) }}
+                            {{ getStatus(record.status) }}
                         </a-tag>
                     </template>
 
@@ -165,7 +165,7 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'status'">
                         <a-tag :color="getStatusColor(record.status)">
-                            {{ getStatusText(record.status) }}
+                            {{ getStatus(record.status) }}
                         </a-tag>
                     </template>
                 </template>
@@ -200,6 +200,7 @@ import AppointmentsService from '@/services/appointment_api'
 import type { BasePatient } from '@/services/patients_api'
 import DepartmentsService from '@/services/departments_api'
 import '@/assets/main.css'
+import { getStatusColor, getStatus } from '@/utils/helper.utils'
 
 // 為了在模板中正確使用，需要從 Descriptions 提取 Item
 const ADescriptions = Descriptions
@@ -252,28 +253,6 @@ const inpatientRecordColumns = [
 ]
 
 const departmentName = ref('')
-
-// 狀態文字和顏色函數... (保持不變)
-const getStatusColor = (status: string) => {
-    switch (status) {
-        case 'pending': return 'yellow'
-        case 'confirmed': return 'green'
-        case 'cancelled': return 'red'
-        case 'completed': return 'blue'
-        case 'no_show': return 'orange'
-        default: return 'gray'
-    }
-}
-const getStatusText = (status: string) => {
-    switch (status) {
-        case 'pending': return 'Pending'
-        case 'confirmed': return '已確認'
-        case 'cancelled': return '已取消'
-        case 'completed': return '已完成'
-        case 'no_show': return '未到'
-        default: return 'Unknown'
-    }
-}
 
 // **新增：進入編輯模式**
 const startEditing = () => {
