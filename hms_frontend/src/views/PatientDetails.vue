@@ -3,6 +3,12 @@
         <div class="header">
             <h1>患者 - {{ patient.name }} - 個資</h1>
             <div class="header-actions">
+                <a-button v-if="!isEditing" @click="goBack" type="primary">
+                    <template #icon>
+                        <CloseOutlined />
+                    </template>
+                    返回
+                </a-button>
                 <a-button v-if="!isEditing" @click="startEditing" type="primary">
                     <template #icon>
                         <EditOutlined />
@@ -23,6 +29,7 @@
                         保存
                     </a-button>
                 </template>
+
             </div>
         </div>
         <a-row v-if="patient.id" :gutter="16" class="mb-6">
@@ -73,7 +80,7 @@
 
                     <a-row v-else :gutter="16">
                         <a-col :span="12">
-                            <a-descriptions  size="small" :column="1">
+                            <a-descriptions size="small" :column="1">
                                 <a-descriptions-item label="病人 ID">{{ patient.id }}</a-descriptions-item>
                                 <a-descriptions-item label="姓名">{{ patient.name }}</a-descriptions-item>
                                 <a-descriptions-item label="性別">{{ patient.gender }}</a-descriptions-item>
@@ -103,13 +110,14 @@
 
                     <a-descriptions v-else size="small" :column="1" class="emergency-descriptions">
                         <a-descriptions-item label="姓名">{{ editablePatient.emergencyContact || '-'
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                         <a-descriptions-item label="電話">{{ editablePatient.emergencyPhone || '-'
-                            }}</a-descriptions-item>
+                        }}</a-descriptions-item>
                     </a-descriptions>
                 </a-card>
             </a-col>
         </a-row>
+
 
         <a-card v-if="patient.id" title="病歷記錄" class="card">
             <a-tabs v-model:activeKey="activeTab">
@@ -135,41 +143,36 @@
                         </template>
                     </a-table>
                 </a-tab-pane>
+                <a-tab-pane key="appointments" tab="預約列表" class="card-body">
+                    <a-table :columns="appointmentRecordColumns" :data-source="appointmentRecords" :loading="loading" 
+                        rowKey="id" class="data-table">
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'department'">
+                                {{ record.department?.displayName || '-' }}
+                            </template>
+                            <template v-else-if="column.dataIndex === 'status'">
+                                <a-tag :color="getStatusColor(record.status)">
+                                    {{ getStatus(record.status) }}
+                                </a-tag>
+                            </template>
+
+                            
+                        </template>
+                    </a-table>
+                </a-tab-pane>
+                <a-tab-pane key="inpatient" tab="住院列表" class="card-body">
+                    <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading"
+                        rowKey="id" class="data-table">
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.dataIndex === 'status'">
+                                <a-tag :color="getStatusColor(record.status)">
+                                    {{ getStatus(record.status) }}
+                                </a-tag>
+                            </template>
+                        </template>
+                    </a-table>
+                </a-tab-pane>
             </a-tabs>
-        </a-card>
-
-        <a-card v-if="patient.id" title="預約紀錄" class="card">
-            <a-table :columns="appointmentRecordColumns" :data-source="appointmentRecords" :loading="loading" rowKey="id"
-                class="data-table">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'status'">
-                        <a-tag :color="getStatusColor(record.status)">
-                            {{ getStatus(record.status) }}
-                        </a-tag>
-                    </template>
-
-                    <template v-else-if="column.key === 'department'">
-                        {{  record.department.displayName}}
-                    </template>
-
-                    <template v-else-if="column.key === 'doctor'">
-                        {{ record.doctor ? record.doctor.name + ' (' + record.doctor.title + ')' : '-' }}
-                    </template>
-                </template>
-            </a-table>
-        </a-card>
-
-        <a-card v-if="patient.id" title="住院紀錄" class="card">
-            <a-table :columns="inpatientRecordColumns" :data-source="inpatientRecords" :loading="loading" rowKey="id"
-                class="data-table">
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'status'">
-                        <a-tag :color="getStatusColor(record.status)">
-                            {{ getStatus(record.status) }}
-                        </a-tag>
-                    </template>
-                </template>
-            </a-table>
         </a-card>
 
         <a-spin v-else class="w-full text-center py-12" tip="載入中..." />
@@ -238,9 +241,10 @@ const medicalRecordColumns = [
 const appointmentRecordColumns = [
     { title: '預約單號', dataIndex: 'id', key: 'id' },
     { title: '預約日期', dataIndex: 'appointmentDate', key: 'appointmentDate' },
-    { title: '醫生', key: 'doctor' },
-    { title: '科室', dataIndex: 'department', key: 'department' },
-    { title: '狀態', dataIndex: 'status', key: 'status' }
+    { title: '部門', dataIndex: 'department', key: 'department' },
+    { title: '狀態', dataIndex: 'status', key: 'status' },
+    
+
 ]
 
 const inpatientRecordColumns = [
@@ -413,7 +417,7 @@ onMounted(() => {
 
 .profile-card :deep(.ant-card-body) {
     padding: 16px;
-    
+
 }
 
 .profile-card :deep(.ant-descriptions) {
@@ -462,7 +466,7 @@ onMounted(() => {
 
 .emergency-card :deep(.ant-form) {
     padding: 16px;
-    
+
 }
 
 .emergency-card :deep(.ant-form-item) {
@@ -492,7 +496,7 @@ onMounted(() => {
 /* For the view mode */
 .emergency-card :deep(.ant-descriptions) {
     padding: 5px;
-    
+
 }
 
 
@@ -533,6 +537,19 @@ onMounted(() => {
 .emergency-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
+}
+
+.data-table {
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.data-table :deep(.ant-table-thead tr th) {
+    color: #fff;
+    background-color: cadetblue;
+    font-weight: bold;
+    font-size: medium;
 }
 
 </style>

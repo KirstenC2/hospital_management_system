@@ -1,4 +1,5 @@
 import api from './api';
+import type { BasePatient } from './patients_api';
 export interface BedStatus {
     id: string;
     status: string;
@@ -14,6 +15,7 @@ export interface Beds {
    statusId: string;
    status: BedStatus;
    isActive: boolean;
+   patient: BasePatient;
 }
 export interface CreateBedDto {
     bedNumber: string;
@@ -32,8 +34,16 @@ class BedsService {
         return await api.get('/beds/all', {params:{status: 'available'}});
     }
 
+    async listAllBeds(): Promise<Beds[]> {
+        return await api.get('/beds/list');
+    }
+
     async getAvailableBeds(): Promise<Beds[]> {
         return await api.get('/beds/available');
+    }
+
+    async findById(id: number): Promise<Beds> {
+        return await api.get(`/beds/info?id=${id}`);
     }
 
     // 创建床位

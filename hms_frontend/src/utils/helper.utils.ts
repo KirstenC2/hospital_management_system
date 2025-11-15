@@ -1,5 +1,5 @@
 export const getStatus = (status: string | undefined) => {
-  status = status?.toLowerCase();
+//   status = status?.toLowerCase();
   if (status === 'pending') {
     return '待确认';
   } else if (status === 'confirmed') {
@@ -22,6 +22,14 @@ export const getStatus = (status: string | undefined) => {
     return '出院';
   }else if(status === 'inpatient'){
     return '住院中';
+  }else if(status === 'in_use'){
+    return '使用中';
+  }else if(status === 'available'){
+    return '可用';
+  }else if(status === 'occupied'){
+    return '占用';
+  }else if(status === 'stained'){
+    return '污損';
   }
   else{
     return '未知';
@@ -48,8 +56,17 @@ export const getStatusColor = (status: string) => {
   }else if(status === 'discharged'){
     return '#b8f1b4ffff';
   }else if(status === 'inpatient'){
-    return 'rgba(215, 165, 165, 1)';
-  }else{
+    return 'rgba(201, 105, 105, 1)';
+  }else if(status === 'in_use'){
+    return 'red';
+  }else if(status === 'available'){
+    return 'green';
+  }else if(status === 'occupied'){
+    return 'red';
+  }else if(status === 'stained'){
+    return 'yellow';
+  }
+  else{
     return 'rgba(73, 19, 19, 1)';
   }
 };

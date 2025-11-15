@@ -45,11 +45,6 @@
               办理住院
             </a-button>
           </template>
-          <template v-else-if="column.key === 'status'">
-            <a-tag :color="getStatusColor(record.status)">
-              {{ record.status }}
-            </a-tag>
-          </template>
         </template>
       </a-table>
     </a-card>
@@ -237,11 +232,6 @@ const columns = [
     title: '電話',
     dataIndex: 'phone',
     key: 'phone',
-  },
-  {
-    title: '狀態',
-    dataIndex: 'status',
-    key: 'status',
   },
   {
     title: '操作',

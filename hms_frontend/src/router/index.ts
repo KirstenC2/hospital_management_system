@@ -64,6 +64,12 @@ const router = createRouter({
       component: Beds
     },
     {
+      path: '/bed-details/:id',
+      name: 'BedDetail',
+      component: () => import('@/views/BedDetails.vue'),
+      props: true
+    },
+    {
 
       path: "/surgery-rooms",
       name: "SurgeryRooms",
