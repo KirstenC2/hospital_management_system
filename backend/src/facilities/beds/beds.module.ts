@@ -8,9 +8,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Bed } from './entities/beds.entity';
 import { BedStatus } from './entities/beds_status.entity';
 import { BedStatusController } from './controllers/bed_status.controller';
+import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
+import { Patient } from 'src/entity/patients/entities/patients.entity';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Bed, BedStatus])],
+  imports: [SequelizeModule.forFeature([Bed, BedStatus, InPatient, Patient])],
   controllers: [BedsController, BedStatusController],
   providers: [
     BedsService, 

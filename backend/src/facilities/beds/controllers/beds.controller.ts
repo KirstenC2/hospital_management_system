@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { BedsService } from '../services/beds.service';
 import { Bed } from '../entities/beds.entity';
 
@@ -24,5 +24,15 @@ export class BedsController {
   @Post('new')
   async create(@Body() bed: Bed): Promise<Bed> {
     return this.bedsService.create(bed);
+  }
+
+  @Get('list')
+  async listAll(): Promise<Bed[]> {
+    return this.bedsService.findAll();
+  }
+
+  @Get('info')
+  async findById(@Query('id') id: string): Promise<Bed> {
+    return this.bedsService.getBedById(+id);
   }
 }

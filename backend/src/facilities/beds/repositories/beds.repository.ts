@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Bed } from '../entities/beds.entity';
 import { Sequelize } from 'sequelize';
 import { BedStatus } from '../entities/beds_status.entity';
-
+import { Patient } from 'src/entity/patients/entities/patients.entity';
+import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
 @Injectable()
 export class BedsRepository {
     constructor(
@@ -11,10 +12,24 @@ export class BedsRepository {
         private bedsModel: typeof Bed,
         @InjectModel(BedStatus)
         private bedStatusModel: typeof BedStatus,   
+        @InjectModel(InPatient)
+        private inPatientModel: typeof InPatient,
+        @InjectModel(Patient)
+        private patientModel: typeof Patient,
     ) {}
 
     async findAll(options?: any): Promise<any> {
-        return this.bedsModel.findAll(options);
+        return this.bedsModel.findAll({
+            include: [{
+                model: this.bedStatusModel,
+                as: 'status',
+                required: true
+            }],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            ...options
+        });
     }
 
     async findAllAvailableBeds(): Promise<any> {
@@ -34,7 +49,26 @@ export class BedsRepository {
     }
 
     async getBedById(id: number): Promise<any> {
-        return this.bedsModel.findByPk(id);
+        return this.bedsModel.findByPk(id, {
+            include: [{
+                model: this.bedStatusModel,
+                as: 'status',
+                required: true
+            },{
+                model: this.inPatientModel,
+                as: 'patient',
+                required: false,
+                include: [{
+                    model: this.patientModel,
+                    as: 'patient',
+                    required: true
+                }]
+
+            }],
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'patientId']
+            }
+        });
     }
 
     async count(options?: any): Promise<number> {

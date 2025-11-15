@@ -29,6 +29,22 @@ export class Bed extends Model<Bed> {
   })
   floor: number;
 
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: false,
+    unique: true,
+    field: 'ward' // 对应 ward
+  })
+  ward: string;
+
+  @Column({
+    type: DataType.STRING(50),
+    allowNull: false,
+    unique: true,
+    field: 'room_number' // 对应 roomNumber
+  })
+  roomNumber: string;
+
   @ForeignKey(() => Department)
   @Column({
     type: DataType.INTEGER,
