@@ -18,6 +18,10 @@ export class BedsService {
     return this.bedsRepository.getBedById(id);
   }
 
+  async deactivateBed(id: number): Promise<void> {
+    return this.bedsRepository.deactivateBed(id);
+  }
+
   async count(): Promise<number> {
     return this.bedsRepository.count();
   }

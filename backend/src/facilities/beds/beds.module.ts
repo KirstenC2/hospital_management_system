@@ -10,9 +10,10 @@ import { BedStatus } from './entities/beds_status.entity';
 import { BedStatusController } from './controllers/bed_status.controller';
 import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
 import { Patient } from 'src/entity/patients/entities/patients.entity';
+import { Department } from 'src/entity/departments/entities/departments.entity';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Bed, BedStatus, InPatient, Patient])],
+  imports: [SequelizeModule.forFeature([Bed, BedStatus, InPatient, Patient, Department])],
   controllers: [BedsController, BedStatusController],
   providers: [
     BedsService, 

@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize';
 import { BedStatus } from '../entities/beds_status.entity';
 import { Patient } from 'src/entity/patients/entities/patients.entity';
 import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
+import { Department } from 'src/entity/departments/entities/departments.entity';
 @Injectable()
 export class BedsRepository {
     constructor(
@@ -16,6 +17,8 @@ export class BedsRepository {
         private inPatientModel: typeof InPatient,
         @InjectModel(Patient)
         private patientModel: typeof Patient,
+        @InjectModel(Department)
+        private departmentModel: typeof Department,
     ) {}
 
     async findAll(options?: any): Promise<any> {
@@ -48,6 +51,10 @@ export class BedsRepository {
         });
     }
 
+    async deactivateBed(id: number): Promise<void> {
+        await this.bedsModel.update({ isActive: false }, { where: { id } });
+    }
+
     async getBedById(id: number): Promise<any> {
         return this.bedsModel.findByPk(id, {
             include: [{
@@ -64,7 +71,13 @@ export class BedsRepository {
                     required: true
                 }]
 
-            }],
+            },
+            {
+                model: this.departmentModel,
+                as: 'department',
+                required: false
+            }
+        ],
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'patientId']
             }
