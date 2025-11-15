@@ -6,7 +6,8 @@
       <a-table :columns="bedsColumns" :data-source="beds">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'isActive'">
-            <a-switch v-model:checked="record.isActive" />
+            <a-switch v-model:checked="record.isActive" @change="deactivateBed(record.id)" />
+            
           </template>
           <template v-else-if="column.key === 'status'">
             <a-tag :color="getStatusColor(record.status.status)">
@@ -75,11 +76,24 @@ const bedsColumns = [
   },
 ];
 
+const deactivateBed = async(id: number) => {
+  try {
+    await BedsService.deactivateBed(id);
+    fetchBeds();
+  } catch (error) {
+    console.error('禁用病床失败:', error);
+  }
+};
+
+const fetchBeds = async () => {
+  beds.value = await BedsService.listAllBeds();
+}
+
 const openPage = (id: number) => {
   router.push('/bed-details/' + id);
 }
 onMounted(async () => {
-  beds.value = await BedsService.listAllBeds();
+  fetchBeds();
   console.log(beds.value);
 });
 </script>

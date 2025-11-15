@@ -46,6 +46,10 @@ class BedsService {
         return await api.get(`/beds/info?id=${id}`);
     }
 
+    async deactivateBed(id: number): Promise<void> {
+        await api.put(`/beds/deactivate?id=${id}`);
+    }
+
     // 创建床位
     async createBed(createBedDto: CreateBedDto): Promise<Beds> {
         return await api.post('/beds/new', createBedDto);

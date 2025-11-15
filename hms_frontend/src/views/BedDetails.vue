@@ -1,14 +1,14 @@
 <template>
-  <div class="beds-view">
+  <div class="bed-details-view">
     <div class="header">
-      <h1>病床 - {{beds?.bedNumber}} - 詳情</h1>
+      <h1>病床 - {{ beds?.bedNumber }} - 詳情</h1>
       <div class="header-actions">
         <a-button type="primary" @click="goBack">返回</a-button>
       </div>
-      
+
     </div>
     <a-card class="status-indicator" :class="getStatusColor(beds?.status?.status || '')">
-          <span>{{ getStatus(beds?.status?.status) }}</span>
+      <span>{{ getStatus(beds?.status?.status) }}</span>
     </a-card>
     <div class="bed-container">
       <h3 class="section-title">病床状态</h3>
@@ -31,9 +31,8 @@
           <div class="pillow"></div>
           <!-- 根据病床状态显示病人 -->
           <div v-if="isBedOccupied" class="patient-outline">
-            <div class="head"></div>
-            <div class="body"></div>
-            <div class="arm left-arm"></div>
+
+            <span>{{ beds?.patient?.patient?.name }} - 使用中</span>
 
           </div>
           <div v-else class="empty-bed-indicator">
@@ -46,21 +45,22 @@
         </div>
       </div>
 
-      <!-- 病床状态信息 -->
-      <div class="bed-status-info">
-       
-        
 
-        <div v-if="beds?.patient" class="patient-info">
-          <a-card title="病人信息">
-            <a-row><strong>病人姓名:</strong> {{ beds.patient?.patient?.name }}</a-row>
-            <a-row><strong>年龄:</strong> {{ beds.patient?.patient?.age }}</a-row>
-            <a-row><strong>性别:</strong> {{ beds.patient?.patient?.gender }}</a-row>
-          </a-card>
-        </div>
-      </div>
+
 
     </div>
+    <a-card title="病床信息" class="data-card">
+      <div v-if="beds">
+        <h2> {{ beds?.department?.displayName }} 病房</h2>
+        <a-descriptions>
+          <a-descriptions-item label="病房">{{ beds?.ward }}</a-descriptions-item>
+          <a-descriptions-item label="病床编号">{{ beds?.bedNumber }}</a-descriptions-item>
+          <a-descriptions-item label="房號">{{ beds?.roomNumber }}</a-descriptions-item>
+          <a-descriptions-item label="樓層">{{ beds?.floor }}</a-descriptions-item>
+          <a-descriptions-item label="狀態">{{ beds?.status?.displayName }}</a-descriptions-item>
+        </a-descriptions>
+      </div>
+    </a-card>
   </div>
 </template>
 
@@ -74,7 +74,7 @@ import { getStatus, getStatusColor } from '../utils/helper.utils';
 const router = useRouter();
 const bedId = ref<number>(Number(router.currentRoute.value.params.id));
 
-interface beds{
+interface beds {
   id: number;
   bedNumber: string;
   floor: number;
@@ -83,6 +83,14 @@ interface beds{
   departmentId: number;
   statusId: number;
   isActive: boolean;
+  department: {
+    id: number;
+    name: string;
+    displayName: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  };
   status: {
     id: number;
     status: string;
@@ -122,7 +130,7 @@ interface beds{
       updatedAt: string;
     };
   };
-} 
+}
 
 const beds = ref<beds>();
 
@@ -139,11 +147,13 @@ const fetchBedDetails = async () => {
     const response = await BedsService.findById(bedId.value);
     const data = response;
     beds.value = data;
+
     console.log('病床详情:', data);
   } catch (error) {
     console.error('获取病床详情失败:', error);
   }
 };
+
 
 const goBack = () => {
   router.go(-1);
@@ -155,6 +165,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.bed-details-view{
+  padding: 20px;
+}
 .bed-rails {
   background: #839db6;
 }
@@ -215,83 +228,18 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* 病人轮廓样式 */
 .patient-outline {
-  position: absolute;
-  top: 50%;
-  left: 30%;
-  transform: translate(-50%, -50%);
-  width: 220px;
-  height: 80px;
+  border: 2px solid rgba(205, 174, 174, 0.868);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.8);
+  color: rgba(122, 111, 111, 0.868);
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
 }
 
-.patient-outline .head {
-  position: absolute;
-  top: 10%;
-  left: -10%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  background: #e8f4f8;
-  border-radius: 50%;
-  border: 2px solid #b8d4e3;
-}
-
-.patient-outline .body {
-  position: absolute;
-  top: 2%;
-  left: 66%;
-  transform: translateX(-90%);
-  width: 150px;
-  height: 70px;
-  background: #e8f4f8;
-  border-radius: 20px 10px 10px 20px;
-  border: 2px solid #b8d4e3;
-}
-
-.patient-outline .arm {
-  position: absolute;
-  width: 20px;
-  height: 60px;
-  background: #e8f4f8;
-  border: 2px solid #b8d4e3;
-  border-radius: 8px;
-}
-
-.patient-outline .left-arm {
-  top: 45px;
-  left: 30px;
-  transform: rotate(-20deg);
-}
-
-
-
-.patient-outline .right-leg {
-  top: 30px;
-  right: 21px;
-  transform: rotate(-90deg);
-}
-
-/* .patient-outline .leg {
-  position: absolute;
-  width: 35px;
-  height: 110px;
-  background: #e8f4f8;
-  border: 2px solid #b8d4e3;
-  border-radius: 8px;
-} */
-
-/* .patient-outline .left-leg {
-  top: 45px;
-  left: 260px;
-  transform: rotate(-10deg);
-}
-
-.patient-outline .right-leg {
-  top: 45px;
-  left: 30px;
-  transform: rotate(-20deg);
-} */
 
 /* 空床指示器 */
 .empty-bed-indicator {
@@ -380,7 +328,15 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.stitching-1 { top: 33%; }
-.stitching-2 { top: 50%; }
-.stitching-3 { top: 67%; }
+.stitching-1 {
+  top: 33%;
+}
+
+.stitching-2 {
+  top: 50%;
+}
+
+.stitching-3 {
+  top: 67%;
+}
 </style>
