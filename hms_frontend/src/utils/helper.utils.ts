@@ -19,7 +19,7 @@ export const getStatus = (status: string | undefined) => {
   }else if(status === 'waiting'){
     return '待住院';
   }else if(status === 'discharged'){
-    return '出院';
+    return '已出院';
   }else if(status === 'inpatient'){
     return '住院中';
   }else if(status === 'in_use'){
@@ -54,7 +54,7 @@ export const getStatusColor = (status: string) => {
   }else if(status === 'waiting'){
     return '#b8f1b4ffff';
   }else if(status === 'discharged'){
-    return '#b8f1b4ffff';
+    return 'green';
   }else if(status === 'inpatient'){
     return 'rgba(201, 105, 105, 1)';
   }else if(status === 'in_use'){

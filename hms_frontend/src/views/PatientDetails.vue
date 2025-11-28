@@ -169,6 +169,9 @@
                                     {{ getStatus(record.status) }}
                                 </a-tag>
                             </template>
+                            <template v-if="column.key === 'action' && record.status === 'inpatient'">  
+                                <a-button type="primary" @click="dischargePatient(record.id)">出院</a-button>
+                            </template>
                         </template>
                     </a-table>
                 </a-tab-pane>
@@ -253,7 +256,8 @@ const inpatientRecordColumns = [
     { title: '床位', dataIndex: 'bedId', key: 'bedId' },
     { title: '入院日期', dataIndex: 'admissionDate', key: 'admissionDate' },
     { title: '預計出院日期', dataIndex: 'expectedDischargeDate', key: 'expectedDischargeDate' },
-    { title: '狀態', dataIndex: 'status', key: 'status' }
+    { title: '狀態', dataIndex: 'status', key: 'status' },
+    { title: '操作', key: 'action' }
 ]
 
 const departmentName = ref('')
@@ -290,6 +294,16 @@ const saveChanges = async () => {
         message.error('更新失敗，請檢查網路或資料格式。')
     } finally {
         saving.value = false
+    }
+}
+
+const dischargePatient = async (id: number) => {
+    try {
+        await PatientsService.dischargePatient(id)
+        message.success('病人出院成功！')
+    } catch (error) {
+        console.error('病人出院失敗:', error)
+        message.error('出院失敗，請檢查網路或資料格式。')
     }
 }
 

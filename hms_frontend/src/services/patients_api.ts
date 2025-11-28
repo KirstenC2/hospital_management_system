@@ -96,6 +96,10 @@ class PatientsService {
     async getPatientRecordList(patientId: number): Promise<any> {
         return await api.get(`/inpatients/records?patient_id=${patientId}`);
     }
+
+    async dischargePatient(id: number): Promise<any> {
+        return await api.put(`/inpatients/discharge?id=${id}`);
+    }
     
     async createInpatientRecord(createInpatientRecordDto: CreateInpatientRecordDto): Promise<any> {
         return await api.post('/inpatients/new', createInpatientRecordDto);
