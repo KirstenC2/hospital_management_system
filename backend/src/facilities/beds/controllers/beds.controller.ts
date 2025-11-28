@@ -21,6 +21,11 @@ export class BedsController {
     return this.bedsService.count();
   }
 
+  @Put('activation-status-update')
+  async activationStatusUpdate(@Query('id') id: string): Promise<void> {
+    return this.bedsService.activationStatusUpdate(+id);
+  }
+
   @Post('new')
   async create(@Body() bed: Bed): Promise<Bed> {
     return this.bedsService.create(bed);

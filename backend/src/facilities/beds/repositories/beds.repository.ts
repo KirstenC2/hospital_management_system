@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Bed } from '../entities/beds.entity';
-import { Sequelize } from 'sequelize';
+import { Op, Sequelize, where } from 'sequelize';
 import { BedStatus } from '../entities/beds_status.entity';
 import { Patient } from 'src/entity/patients/entities/patients.entity';
 import { InPatient } from 'src/entity/patients/inpatients/entities/inpatients.entity';
@@ -73,8 +73,10 @@ export class BedsRepository {
                     model: this.patientModel,
                     as: 'patient',
                     required: true
-                }]
-
+                }],
+                where: {
+                    discharge_date: null
+                }
             },
             {
                 model: this.departmentModel,
@@ -110,6 +112,19 @@ export class BedsRepository {
                 [Sequelize.fn('SUM', Sequelize.col('is_active')), 'false'],
             ],
         });
+    }
+
+    async getBedActiveStatus(id: number): Promise<any> {
+        return this.bedsModel.findByPk(id, {
+            attributes: ['is_active']
+        });
+    }
+
+    async activationStatusUpdate(id: number, isActive: boolean): Promise<void> {
+        if (id === null || id === undefined) {
+            throw new Error('Bed ID is required');
+        }
+        await this.bedsModel.update({ isActive: isActive }, { where: { id } });
     }
 
     async create(bed: any): Promise<any> {

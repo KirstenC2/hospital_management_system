@@ -34,6 +34,17 @@ export class BedsService {
     return this.bedsRepository.stats();
   }
 
+  async activationStatusUpdate(id: number): Promise<void> {
+    const bed = await this.bedsRepository.getBedActiveStatus(id);
+    if (bed.is_active) {
+        const result = await this.bedsRepository.activationStatusUpdate(id, false);
+        return result;
+    } else {
+        const result = await this.bedsRepository.activationStatusUpdate(id, true);
+        return result;
+    }
+  }
+
   async create(bed: any): Promise<any> {
     return this.bedsRepository.create(bed);
   }
