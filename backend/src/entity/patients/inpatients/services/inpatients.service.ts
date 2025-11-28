@@ -27,7 +27,19 @@ export class InPatientsService {
                 throw new Error('Bed is not available');
             }
         }
-        return this.inpatientsRepository.createInpatientRecord(createPatientDto);
+        let create_result= await this.inpatientsRepository.createInpatientRecord(createPatientDto);
+        if(createPatientDto.bedId) {
+            await this.bedsService.updateBedStatus(createPatientDto.bedId, 4); // 4 is occupied
+        }
+        return create_result;
+    }
+
+    async dischargePatient(id: number): Promise<any> {
+        let discharge_result= await this.inpatientsRepository.dischargePatient(id);
+        if(discharge_result.dataValues.bedId) {
+            await this.bedsService.updateBedStatus(discharge_result.dataValues.bedId, 1); // 1 is available
+        }
+        return discharge_result;
     }
 
     async getPatientsByDoctorId(doctorId: number): Promise<InPatient[]> {

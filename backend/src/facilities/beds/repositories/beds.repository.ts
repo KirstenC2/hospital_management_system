@@ -51,6 +51,10 @@ export class BedsRepository {
         });
     }
 
+    async updateBedStatus(id: number, statusId: number): Promise<void> {
+        await this.bedsModel.update({ statusId }, { where: { id } });
+    }
+
     async deactivateBed(id: number): Promise<void> {
         await this.bedsModel.update({ isActive: false }, { where: { id } });
     }

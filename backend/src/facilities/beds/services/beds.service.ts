@@ -14,6 +14,10 @@ export class BedsService {
     return this.bedsRepository.findAllAvailableBeds();
   }
 
+  async updateBedStatus(id: number, statusId: number): Promise<void> {
+    return this.bedsRepository.updateBedStatus(id, statusId);
+  }
+
   async getBedById(id: number): Promise<any> {
     return this.bedsRepository.getBedById(id);
   }

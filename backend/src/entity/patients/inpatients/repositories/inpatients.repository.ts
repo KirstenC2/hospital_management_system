@@ -22,6 +22,13 @@ export class InPatientsRepository {
         return this.inpatientModel.create(createPatientDto as any);
     }
 
+    async dischargePatient(id: number): Promise<any> {
+        return this.inpatientModel.update({ 
+            status: 'discharged',
+            dischargeDate: new Date()
+         }, { where: { id } });
+    }
+
     async getPatientsByDoctorId(doctorId: number): Promise<InPatient[]> {
         return this.inpatientModel.findAll({
             include: [Patient],
