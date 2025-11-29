@@ -31,6 +31,9 @@ export class BedsRepository {
             attributes: {
                 exclude: ['createdAt', 'updatedAt']
             },
+            order: [
+                ['id', 'ASC']
+            ],
             ...options
         });
     }

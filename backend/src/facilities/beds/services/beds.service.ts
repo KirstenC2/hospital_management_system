@@ -40,7 +40,8 @@ export class BedsService {
 
   async activationStatusUpdate(id: number): Promise<void> {
     const bed = await this.bedsRepository.getBedActiveStatus(id);
-    if (bed.is_active) {
+    console.log(bed.dataValues.is_active);
+    if (bed.dataValues.is_active) {
         const result = await this.bedsRepository.activationStatusUpdate(id, false);
         return result;
     } else {
