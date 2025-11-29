@@ -128,6 +128,10 @@ export class BedsRepository {
     }
 
     async create(bed: any): Promise<any> {
-        return this.bedsModel.create(bed);
+        let result = await this.bedsModel.create(bed);
+       if (result) {
+           return result;
+       }
+       return null;
     }
 }

@@ -50,7 +50,11 @@ export class BedsService {
   }
 
   async create(bed: any): Promise<any> {
-    return this.bedsRepository.create(bed);
+    let result = await this.bedsRepository.create(bed);
+    if (result) {
+        return result;
+    }
+    return null;
   }
 
 }   
