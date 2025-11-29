@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Put, Optional } from '@nestjs/common';
 import { BedsService } from '../services/beds.service';
 import { Bed } from '../entities/beds.entity';
 
@@ -6,10 +6,10 @@ import { Bed } from '../entities/beds.entity';
 export class BedsController {
   constructor(private readonly bedsService: BedsService) {}
 
-  @Get('all')
-  async findAll(): Promise<Bed[]> {
-    return this.bedsService.findAll();
-  } 
+  // @Get('all')
+  // async findAll(): Promise<Bed[]> {
+  //   return this.bedsService.findAll();
+  // } 
 
   @Get('available')
   async available(): Promise<any> {
@@ -32,8 +32,12 @@ export class BedsController {
   }
 
   @Get('list')
-  async listAll(): Promise<Bed[]> {
-    return this.bedsService.findAll();
+  async listAll(@Optional() @Query('department_id') departmentId: number): Promise<Bed[]> {
+    if (departmentId) {
+      return this.bedsService.findAll({ where: { department_id: +departmentId } });
+    } else {
+      return this.bedsService.findAll();
+    }
   }
 
   @Get('info')

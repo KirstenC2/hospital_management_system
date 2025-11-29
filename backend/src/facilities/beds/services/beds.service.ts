@@ -6,8 +6,12 @@ import { BedsRepository } from '../repositories/beds.repository';
 export class BedsService {
 
     constructor(private readonly bedsRepository: BedsRepository) {}
-  async findAll(): Promise<any> {
-    return this.bedsRepository.findAll();
+  async findAll(options?: any): Promise<any> {
+    if (options) {
+      return this.bedsRepository.findAll(options);
+    } else {
+      return this.bedsRepository.findAll();
+    }
   }
 
   async findAllAvailableBeds(): Promise<any> {
