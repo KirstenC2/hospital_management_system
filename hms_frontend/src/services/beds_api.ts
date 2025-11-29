@@ -18,14 +18,15 @@ export interface Beds {
    patient: BasePatient;
 }
 export interface CreateBedDto {
-    bedNumber: string;
-    floor: number;
-    ward: string;
-    roomNumber: string;
-    departmentId: string;
-    statusId: string;
-    status: BedStatus;
-    isActive: boolean;
+    bedNumber: number,
+    ward: string,
+    roomNumber: number,
+    statusId: number,
+    departmentId: number,
+    is_active: boolean,
+    location_info: string,
+    floor: number,
+    notes: string
 }
 
 export interface BedListParams {
@@ -64,6 +65,10 @@ class BedsService {
     // 创建床位
     async createBed(createBedDto: CreateBedDto): Promise<Beds> {
         return await api.post('/beds/new', createBedDto);
+    }
+
+    async listBedStatus(): Promise<BedStatus[]> {
+        return await api.get('/beds/status');
     }
 }
 

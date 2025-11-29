@@ -70,6 +70,11 @@ const router = createRouter({
       props: true
     },
     {
+      path: '/beds/new',
+      name: 'CreateBed',
+      component: () => import('@/components/CreateNewBedPage.vue')
+    },
+    {
 
       path: "/surgery-rooms",
       name: "SurgeryRooms",
